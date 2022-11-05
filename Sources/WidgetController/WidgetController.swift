@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct WidgetController: View {
+public struct WidgetController: View {
     @State var inputViews: [AnyView]
     @State var selectionViews: [AnyView] = []
     
@@ -71,7 +71,7 @@ struct WidgetController: View {
             inputViews = [AnyView(cv.0), AnyView(cv.1), AnyView(cv.2), AnyView(cv.3), AnyView(cv.4), AnyView(cv.5), AnyView(cv.6), AnyView(cv.7), AnyView(cv.8), AnyView(cv.9)]
     }
 
-    var body: some View {
+    public var body: some View {
         ScrollView(showsIndicators: false) {
             ForEach(0 ..< inputViews.count, id: \.self) { index in
                 self.inputViews[index]
