@@ -22,8 +22,7 @@ struct WidgetButtonStyle: ViewModifier {
         content
             .foregroundColor(Color.primary)
             .buttonStyle(.bordered)
-            .buttonBorderShape(.capsule)
-            
+            .buttonBorderShape(.capsule) 
     }
 }
 

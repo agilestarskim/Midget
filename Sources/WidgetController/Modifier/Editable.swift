@@ -16,7 +16,6 @@ extension View {
 struct EditableModifier: ViewModifier {
     let onTouch: () -> Void
     func body(content: Content) -> some View {
-        
         ZStack(alignment: .topLeading){
             content
             Image(systemName: "minus.circle.fill")
@@ -31,10 +30,7 @@ struct EditableModifier: ViewModifier {
                 .onTapGesture {
                     onTouch()
                 }
-            
         }
         .padding()
     }
-    
-    
 }

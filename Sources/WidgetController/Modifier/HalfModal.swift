@@ -1,6 +1,6 @@
 import SwiftUI
 
-//this is a half modal for previous iOS 16 
+//this is a half modal for previous iOS 16.0
 extension View {
     public func customBottomSheet<SheetContent: View>(
         isPresented: Binding<Bool>,
@@ -10,8 +10,6 @@ extension View {
     }
 }
 
-
-
 struct BottomSheet<SheetContent: View>: ViewModifier {
     @Binding var isPresented: Bool
     let sheetContent: () -> SheetContent
@@ -19,11 +17,9 @@ struct BottomSheet<SheetContent: View>: ViewModifier {
     func body(content: Content) -> some View {
         ZStack {
             content
-        
             if isPresented {
                 VStack {
                     Spacer()
-                
                     VStack {
                         HStack {
                             Spacer()

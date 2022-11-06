@@ -16,10 +16,12 @@ public struct WidgetController: View {
     ){
         showingViews = [AnyView(content())]
     }
+    
     public init<V0: View, V1: View>(
         @ViewBuilder content: @escaping () -> TupleView<(V0, V1)>
     ) {
         let cv = content().value
+        
         showingViews = [AnyView(cv.0), AnyView(cv.1)]
     }
 
@@ -35,10 +37,10 @@ public struct WidgetController: View {
         showingViews = [AnyView(cv.0), AnyView(cv.1), AnyView(cv.2), AnyView(cv.3)]
     }
     
-    public init<V0: View, V1: View, V2: View, V3: View,V4: View>(
+    public init<V0: View, V1: View, V2: View, V3: View, V4: View>(
         @ViewBuilder content: @escaping () -> TupleView<(V0, V1, V2, V3, V4)>) {
         let cv = content().value
-            showingViews = [AnyView(cv.0), AnyView(cv.1), AnyView(cv.2), AnyView(cv.3), AnyView(cv.4)]
+        showingViews = [AnyView(cv.0), AnyView(cv.1), AnyView(cv.2), AnyView(cv.3), AnyView(cv.4)]
     }
     
     public init<V0: View, V1: View, V2: View, V3: View,V4: View, V5: View>(

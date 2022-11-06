@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-
 extension View {
     public func glassBackground() -> some View {
         modifier(GlassBackground())

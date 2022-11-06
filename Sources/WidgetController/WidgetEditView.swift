@@ -24,7 +24,7 @@ struct WidgetEditView: View {
                             showingRemoveAlert = true
                         }
                         .wiggle()
-                        .transition(.slide)
+                        .transition(.scale)
                 }
             }
         }
@@ -75,9 +75,6 @@ struct WidgetEditView: View {
         hiddenViews.append(view)
         showingViews[index] = nil
     }
-    
-   
-
 }
 
 //version branch

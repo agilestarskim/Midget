@@ -6,7 +6,6 @@ extension View {
     }
 }
 
-
 struct WiggleModifier: ViewModifier {
     @State private var isWiggling = false
        
