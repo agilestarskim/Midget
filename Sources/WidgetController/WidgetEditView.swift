@@ -11,14 +11,14 @@ struct WidgetEditView: View {
     @State private var showingAddSheet = false
     @State private var showingRemoveAlert = false
     @State private var index = 0
-    @Binding var inputViews: [AnyView?]
-    @Binding var selectionViews: [AnyView]
+    @Binding var showingViews: [AnyView?]
+    @Binding var hiddenViews: [AnyView]
     
     var body: some View {
         ScrollView(showsIndicators: false){
-            ForEach(0..<inputViews.count, id: \.self){ index in
-                if (inputViews[index] != nil) {
-                    inputViews[index]
+            ForEach(0..<showingViews.count, id: \.self){ index in
+                if (showingViews[index] != nil) {
+                    showingViews[index]
                         .editable{
                             self.index = index
                             showingRemoveAlert = true
@@ -52,28 +52,28 @@ struct WidgetEditView: View {
         .alert(isPresented: $showingRemoveAlert) {
             Alert(title: Text("위젯을 제거하겠습니까?"),
                   message: Text("이 위젯을 제거해도 데이터가 삭제되지 않습니다."),
-                  primaryButton: .destructive(Text("제거"), action: { withAnimation{remove(index: index)} }),
+                  primaryButton: .destructive(Text("제거"), action: { withAnimation{ remove(index: index) } }),
                   secondaryButton: .cancel(Text("취소"))
             )
         }
         .modify{
             if #available(iOS 16.0, * ){
                 $0.sheet(isPresented: $showingAddSheet){
-                    SelectionView(inputViews: $inputViews, selectionViews: $selectionViews)
+                    WidgetSheetView(showingViews: $showingViews, hiddenViews: $hiddenViews)
                         .presentationDetents([.medium])
                 }
             }else {
                 $0.customBottomSheet(isPresented: $showingAddSheet){
-                    SelectionView(inputViews: $inputViews, selectionViews: $selectionViews)
+                    WidgetSheetView(showingViews: $showingViews, hiddenViews: $hiddenViews)
                 }
             }
         }
     }
     
     func remove(index: Int) {
-        guard let view = inputViews[index] else { return }
-        selectionViews.append(view)
-        inputViews[index] = nil
+        guard let view = showingViews[index] else { return }
+        hiddenViews.append(view)
+        showingViews[index] = nil
     }
     
    

@@ -1,5 +1,6 @@
 import SwiftUI
 
+//this is a half modal for previous iOS 16 
 extension View {
     public func customBottomSheet<SheetContent: View>(
         isPresented: Binding<Bool>,
