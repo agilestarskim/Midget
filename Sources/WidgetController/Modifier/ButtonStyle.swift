@@ -8,17 +8,17 @@
 import SwiftUI
 
 extension View {
-    func widgetButtonStyle() -> some View {
+    public func widgetButtonStyle() -> some View {
         modifier(WidgetButtonStyle())
     }
     
-    func widgetTextStyle(padding: Int) -> some View {
+    public func widgetTextStyle(padding: Int) -> some View {
         modifier(WidgetTextStyle(padding: padding))
     }
 }
 
 struct WidgetButtonStyle: ViewModifier {
-    func body(content: Content) -> some View {
+    public func body(content: Content) -> some View {
         content
             .foregroundColor(Color.primary)
             .buttonStyle(.bordered)

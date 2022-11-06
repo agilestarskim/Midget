@@ -8,7 +8,7 @@
 import SwiftUI
 
 public struct WidgetController: View {
-    @State var inputViews: [AnyView]
+    @State var inputViews: [AnyView?]
     @State var selectionViews: [AnyView] = []
     
     public init<V0: View>(

@@ -1,5 +1,16 @@
 import SwiftUI
 
+extension View {
+    public func customBottomSheet<SheetContent: View>(
+        isPresented: Binding<Bool>,
+        sheetContent: @escaping () -> SheetContent
+    ) -> some View {
+        self.modifier(BottomSheet(isPresented: isPresented, sheetContent: sheetContent))
+    }
+}
+
+
+
 struct BottomSheet<SheetContent: View>: ViewModifier {
     @Binding var isPresented: Bool
     let sheetContent: () -> SheetContent
@@ -37,11 +48,3 @@ struct BottomSheet<SheetContent: View>: ViewModifier {
     }
 }
 
-extension View {
-    func customBottomSheet<SheetContent: View>(
-        isPresented: Binding<Bool>,
-        sheetContent: @escaping () -> SheetContent
-    ) -> some View {
-        self.modifier(BottomSheet(isPresented: isPresented, sheetContent: sheetContent))
-    }
-}

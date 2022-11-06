@@ -9,7 +9,7 @@ import SwiftUI
 
 struct SelectionView: View {
     @Environment(\.dismiss) var dismiss
-    @Binding var inputViews: [AnyView]
+    @Binding var inputViews: [AnyView?]
     @Binding var selectionViews: [AnyView]
     
     var body: some View {
@@ -19,9 +19,13 @@ struct SelectionView: View {
                     .shadow(radius: 10, x: 10, y: 10)
                     .padding()
                     .onTapGesture {
-                        inputViews.append(selectionViews[index])
-                        selectionViews.remove(at: index)
-                        dismiss()
+                        withAnimation{
+                            if let foundIndex = inputViews.firstIndex(where: {$0 == nil}) {
+                                inputViews[foundIndex] = selectionViews[index]
+                            }
+                            selectionViews.remove(at: index)
+                            dismiss()
+                        }
                     }
             }
         }

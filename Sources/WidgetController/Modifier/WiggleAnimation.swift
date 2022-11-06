@@ -1,7 +1,7 @@
 import SwiftUI
 
 extension View {
-    func wiggle() -> some View {
+    public func wiggle() -> some View {
         modifier(WiggleModifier())
     }
 }

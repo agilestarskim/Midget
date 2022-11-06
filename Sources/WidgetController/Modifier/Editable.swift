@@ -8,7 +8,7 @@
 import SwiftUI
 
 extension View {
-    func editable(onTouch: @escaping () -> Void) -> some View {
+    public func editable(onTouch: @escaping () -> Void) -> some View {
         modifier(EditableModifier(onTouch: onTouch))
     }
 }
