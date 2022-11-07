@@ -3,9 +3,13 @@
 iOS Widget control system in swiftUI
 you can add, delete and change order your own views
 
-![RPReplay_Final1667814244-2-2](https://user-images.githubusercontent.com/79740398/200289392-c290ffae-59cd-4ffa-ba3c-8f91741a1488.gif)
+# Screenshots
 
-![RPReplay_Final1667813604](https://user-images.githubusercontent.com/79740398/200287349-955d8530-1087-4d25-83e3-6b9e38ddd136.gif)
+## remove
+![ezgif com-gif-maker-2](https://user-images.githubusercontent.com/79740398/200291433-4a4c62e9-4388-409a-a6e4-ed34f28b15a1.gif)
+
+## add
+![ezgif com-gif-maker-3](https://user-images.githubusercontent.com/79740398/200292866-8a73c464-d762-45c4-8167-a83b473c6c41.gif)
 
 # Installing
 
@@ -41,6 +45,8 @@ Struct ContentView: View {
 }
 ```
 
-# permanent storage
+# Todo
 
-on developing..
+* permanent storage 
+* switching view order
+* flexible layout
