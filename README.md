@@ -3,6 +3,8 @@
 iOS Widget control system in swiftUI
 you can add, delete and change order your own views
 
+![RPReplay_Final1667814244-2-2](https://user-images.githubusercontent.com/79740398/200289392-c290ffae-59cd-4ffa-ba3c-8f91741a1488.gif)
+
 ![RPReplay_Final1667813604](https://user-images.githubusercontent.com/79740398/200287349-955d8530-1087-4d25-83e3-6b9e38ddd136.gif)
 
 # Installing
