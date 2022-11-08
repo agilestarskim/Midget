@@ -50,3 +50,4 @@ Struct ContentView: View {
 * permanent storage 
 * switching view order
 * flexible layout
+* mutiple language support
