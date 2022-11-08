@@ -8,84 +8,59 @@
 import SwiftUI
 
 public struct WidgetController: View {
-    @State var showingViews: [AnyView?]
-    @State var hiddenViews: [AnyView] = []
+    let data: [(String, Bool)]
+    let widgets: [Widget]
+    let changeCompletion: ([(String, Bool)]) -> Void
+    @State var showingWidgets: [Widget?]
+    @State var hiddenWidgets: [Widget]
     
-    public init<V0: View>(
-        @ViewBuilder content: @escaping () -> V0
+    public init(
+        data: [(String, Bool)],
+        widgets: [Widget],
+        changeCompletion: @escaping ([(String, Bool)]) -> Void
     ){
-        showingViews = [AnyView(content())]
-    }
-    
-    public init<V0: View, V1: View>(
-        @ViewBuilder content: @escaping () -> TupleView<(V0, V1)>
-    ) {
-        let cv = content().value
         
-        showingViews = [AnyView(cv.0), AnyView(cv.1)]
-    }
-
-    public init<V0: View, V1: View, V2: View>(
-        @ViewBuilder content: @escaping () -> TupleView<(V0, V1, V2)>) {
-        let cv = content().value
-        showingViews = [AnyView(cv.0), AnyView(cv.1), AnyView(cv.2)]
-    }
-
-    public init<V0: View, V1: View, V2: View, V3: View>(
-        @ViewBuilder content: @escaping () -> TupleView<(V0, V1, V2, V3)>) {
-        let cv = content().value
-        showingViews = [AnyView(cv.0), AnyView(cv.1), AnyView(cv.2), AnyView(cv.3)]
-    }
-    
-    public init<V0: View, V1: View, V2: View, V3: View, V4: View>(
-        @ViewBuilder content: @escaping () -> TupleView<(V0, V1, V2, V3, V4)>) {
-        let cv = content().value
-        showingViews = [AnyView(cv.0), AnyView(cv.1), AnyView(cv.2), AnyView(cv.3), AnyView(cv.4)]
-    }
-    
-    public init<V0: View, V1: View, V2: View, V3: View,V4: View, V5: View>(
-        @ViewBuilder content: @escaping () -> TupleView<(V0, V1, V2, V3, V4, V5)>) {
-        let cv = content().value
-            showingViews = [AnyView(cv.0), AnyView(cv.1), AnyView(cv.2), AnyView(cv.3), AnyView(cv.4), AnyView(cv.5)]
+        self.data = data
+        self.widgets = widgets
+        self.changeCompletion = changeCompletion
+        
+        var showingView: [Widget] = []
+        var hiddenView: [Widget] = []
+        for view in data {
+            for widget in widgets {
+                if view.0 == widget.id {
+                    if view.1 {
+                        showingView.append(widget)
+                    }else {
+                        hiddenView.append(widget)
+                    }
+                    break
+                }
+            }
+        }
+        
+        self._showingWidgets = State(initialValue: showingView)
+        self._hiddenWidgets = State(initialValue: hiddenView)
     }
     
-    public init<V0: View, V1: View, V2: View, V3: View,V4: View, V5: View, V6: View>(
-        @ViewBuilder content: @escaping () -> TupleView<(V0, V1, V2, V3, V4, V5, V6)>) {
-        let cv = content().value
-            showingViews = [AnyView(cv.0), AnyView(cv.1), AnyView(cv.2), AnyView(cv.3), AnyView(cv.4), AnyView(cv.5), AnyView(cv.6)]
-    }
     
-    public init<V0: View, V1: View, V2: View, V3: View,V4: View, V5: View, V6: View, V7: View>(
-        @ViewBuilder content: @escaping () -> TupleView<(V0, V1, V2, V3, V4, V5, V6, V7)>) {
-        let cv = content().value
-            showingViews = [AnyView(cv.0), AnyView(cv.1), AnyView(cv.2), AnyView(cv.3), AnyView(cv.4), AnyView(cv.5), AnyView(cv.6), AnyView(cv.7)]
-    }
     
-    public init<V0: View, V1: View, V2: View, V3: View,V4: View, V5: View, V6: View, V7: View, V8: View>(
-        @ViewBuilder content: @escaping () -> TupleView<(V0, V1, V2, V3, V4, V5, V6, V7, V8)>) {
-        let cv = content().value
-            showingViews = [AnyView(cv.0), AnyView(cv.1), AnyView(cv.2), AnyView(cv.3), AnyView(cv.4), AnyView(cv.5), AnyView(cv.6), AnyView(cv.7), AnyView(cv.8)]
-    }
-    
-    public init<V0: View, V1: View, V2: View, V3: View,V4: View, V5: View, V6: View, V7: View, V8: View, V9: View>(
-        @ViewBuilder content: @escaping () -> TupleView<(V0, V1, V2, V3, V4, V5, V6, V7, V8, V9)>) {
-        let cv = content().value
-            showingViews = [AnyView(cv.0), AnyView(cv.1), AnyView(cv.2), AnyView(cv.3), AnyView(cv.4), AnyView(cv.5), AnyView(cv.6), AnyView(cv.7), AnyView(cv.8), AnyView(cv.9)]
-    }
 
     public var body: some View {
         ScrollView(showsIndicators: false) {
-            ForEach(0 ..< showingViews.count, id: \.self) { index in
-                self.showingViews[index]
+            ForEach(0 ..< showingWidgets.count, id: \.self) { index in
+                self.showingWidgets[index]?.view
                     .padding()
             }
             NavigationLink {
-                WidgetEditView(showingViews: $showingViews, hiddenViews: $hiddenViews)
+                WidgetEditView(showingWidgets: $showingWidgets, hiddenWidgets: $hiddenWidgets, changeCompletion: changeCompletion)
             } label: {
                 Text("편집").widgetTextStyle(padding: 15)
             }
 
         }
     }
+    
+    
 }
 

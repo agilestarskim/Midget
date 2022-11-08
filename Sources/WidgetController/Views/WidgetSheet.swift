@@ -9,23 +9,23 @@ import SwiftUI
 
 struct WidgetSheetView: View {
     @Environment(\.dismiss) var dismiss
-    @Binding var showingViews: [AnyView?]
-    @Binding var hiddenViews: [AnyView]
+    @Binding var showingWidgets: [Widget?]
+    @Binding var hiddenWidgets: [Widget]
     
     var body: some View {
         ScrollView {
-            ForEach(0..<hiddenViews.count, id: \.self){ index in
-                hiddenViews[index]
+            ForEach(0..<hiddenWidgets.count, id: \.self){ index in
+                hiddenWidgets[index].view
                 .shadow(radius: 10, x: 10, y: 10)
                 .padding()
                 .onTapGesture {
                     withAnimation{
-                        if let foundIndex = showingViews.firstIndex(where: {$0 == nil}) {
-                            showingViews[foundIndex] = hiddenViews[index]
+                        if let foundIndex = showingWidgets.firstIndex(where: {$0 == nil}) {
+                            showingWidgets[foundIndex] = hiddenWidgets[index]
                         }else {
-                            showingViews.append(hiddenViews[index])
+                            showingWidgets.append(hiddenWidgets[index])
                         }
-                        hiddenViews.remove(at: index)
+                        hiddenWidgets.remove(at: index)
                         dismiss()
                     }
                 }

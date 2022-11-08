@@ -11,14 +11,15 @@ struct WidgetEditView: View {
     @State private var showingAddSheet = false
     @State private var showingRemoveAlert = false
     @State private var index = 0
-    @Binding var showingViews: [AnyView?]
-    @Binding var hiddenViews: [AnyView]
+    @Binding var showingWidgets: [Widget?]
+    @Binding var hiddenWidgets: [Widget]
+    let changeCompletion: ([(String, Bool)]) -> Void
     
     var body: some View {
         ScrollView(showsIndicators: false){
-            ForEach(0..<showingViews.count, id: \.self){ index in
-                if (showingViews[index] != nil) {
-                    showingViews[index]
+            ForEach(0..<showingWidgets.count, id: \.self){ index in
+                if (showingWidgets[index] != nil) {
+                    showingWidgets[index]?.view
                         .editable{
                             self.index = index
                             showingRemoveAlert = true
@@ -39,6 +40,7 @@ struct WidgetEditView: View {
             }
             ToolbarItem(placement: .navigationBarTrailing){
                 Button{
+                    complete()
                     dismiss()
                 } label: {
                     Text("완료")
@@ -59,21 +61,37 @@ struct WidgetEditView: View {
         .modify{
             if #available(iOS 16.0, * ){
                 $0.sheet(isPresented: $showingAddSheet){
-                    WidgetSheetView(showingViews: $showingViews, hiddenViews: $hiddenViews)
+                    WidgetSheetView(showingWidgets: $showingWidgets, hiddenWidgets: $hiddenWidgets)
                         .presentationDetents([.medium])
                 }
             }else {
                 $0.customBottomSheet(isPresented: $showingAddSheet){
-                    WidgetSheetView(showingViews: $showingViews, hiddenViews: $hiddenViews)
+                    WidgetSheetView(showingWidgets: $showingWidgets, hiddenWidgets: $hiddenWidgets)
                 }
             }
         }
     }
     
     func remove(index: Int) {
-        guard let view = showingViews[index] else { return }
-        hiddenViews.append(view)
-        showingViews[index] = nil
+        guard let widget = showingWidgets[index] else { return }
+        hiddenWidgets.append(widget)
+        showingWidgets[index] = nil
+    }
+    
+    func complete() {
+        var showingTuples: [(String, Bool)] = []
+        var hiddenTuples: [(String, Bool)] = []
+        for sw in showingWidgets {
+            if let sw = sw {
+                showingTuples.append((sw.id,  true))
+            }
+        }
+        for hw in hiddenWidgets {
+            hiddenTuples.append((hw.id, false))
+        }
+        
+        changeCompletion(showingTuples + hiddenTuples)
+        
     }
 }
 
