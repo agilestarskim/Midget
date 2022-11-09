@@ -102,9 +102,38 @@ Because widgetStateList tracks and finds your view by id.
 
 So don't forget to match Widget's id and Tuple's first string.
 
+```swift
+var widgetStateList = [("viewA", true), ("viewB", false), ("viewC", true)]
+
+widgets: [
+    Widget(view: AnyView(viewA), id: "viewA"),
+    Widget(view: AnyView(viewB), id: "viewB"),
+    Widget(view: AnyView(viewC), id: "viewC")
+]
+```
+If those are different, widgetcontroller can't find view.
+
+**Widgets array's order doesn't impact on real widget's order**
+
+This widgetStateList's order is important.
+```swift
+var widgetStateList = [("viewA", true), ("viewB", false), ("viewC", true)]
+```
+
+This widgets list's order is not important.
+```swift
+widgets: [
+    Widget(view: AnyView(viewA), id: "viewA"),
+    Widget(view: AnyView(viewB), id: "viewB"),
+    Widget(view: AnyView(viewC), id: "viewC")
+]
+```
+
 ## 6. Store permanently Widget's State
 
-You can save widget's state by using closure.
+When app close and delete everything, Widgetcontroller is useless as product. 
+
+So you can save widget's state by using closure.
 
 It returns chaged widget state list when user complete editing.
 
