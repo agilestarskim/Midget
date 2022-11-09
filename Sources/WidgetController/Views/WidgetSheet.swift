@@ -1,31 +1,23 @@
-//
-//  SelectionView.swift
-//  ViewBuilderTest
-//
-//  Created by 김민성 on 2022/11/05.
-//
-
 import SwiftUI
 
 struct WidgetSheetView: View {
     @Environment(\.dismiss) var dismiss
-    @Binding var showingWidgets: [Widget?]
-    @Binding var hiddenWidgets: [Widget]
+    @ObservedObject var vm: WidgetController.ViewModel
     
     var body: some View {
         ScrollView {
-            ForEach(0..<hiddenWidgets.count, id: \.self){ index in
-                hiddenWidgets[index].view
+            ForEach(0..<vm.hiddenWidgets.count, id: \.self){ index in
+                vm.hiddenWidgets[index].view
                 .shadow(radius: 10, x: 10, y: 10)
                 .padding()
                 .onTapGesture {
                     withAnimation{
-                        if let foundIndex = showingWidgets.firstIndex(where: {$0 == nil}) {
-                            showingWidgets[foundIndex] = hiddenWidgets[index]
+                        if let foundIndex = vm.showingWidgets.firstIndex(where: {$0 == nil}) {
+                            vm.showingWidgets[foundIndex] = vm.hiddenWidgets[index]
                         }else {
-                            showingWidgets.append(hiddenWidgets[index])
+                            vm.showingWidgets.append(vm.hiddenWidgets[index])
                         }
-                        hiddenWidgets.remove(at: index)
+                        vm.hiddenWidgets.remove(at: index)
                         dismiss()
                     }
                 }

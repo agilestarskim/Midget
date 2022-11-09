@@ -32,7 +32,7 @@ struct BottomSheet<SheetContent: View>: ViewModifier {
                                     .padding(.top, 5)
                             }
                         }
-                    
+
                         sheetContent()
                     }
                     .padding()

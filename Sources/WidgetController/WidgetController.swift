@@ -1,18 +1,10 @@
-//
-//  WidgetController.swift
-//  ViewBuilderTest
-//
-//  Created by 김민성 on 2022/11/05.
-//
-
 import SwiftUI
 
 public struct WidgetController: View {
     let data: [(String, Bool)]
     let widgets: [Widget]
     let changeCompletion: ([(String, Bool)]) -> Void
-    @State var showingWidgets: [Widget?]
-    @State var hiddenWidgets: [Widget]
+    @ObservedObject var vm = ViewModel()
     
     public init(
         data: [(String, Bool)],
@@ -24,43 +16,39 @@ public struct WidgetController: View {
         self.widgets = widgets
         self.changeCompletion = changeCompletion
         
-        var showingView: [Widget] = []
-        var hiddenView: [Widget] = []
+        var tempShowingWidgets: [Widget] = []
+        var tempHiddenWidgets: [Widget] = []
         for view in data {
             for widget in widgets {
                 if view.0 == widget.id {
                     if view.1 {
-                        showingView.append(widget)
+                        tempShowingWidgets.append(widget)
                     }else {
-                        hiddenView.append(widget)
+                        tempHiddenWidgets.append(widget)
                     }
                     break
                 }
             }
         }
         
-        self._showingWidgets = State(initialValue: showingView)
-        self._hiddenWidgets = State(initialValue: hiddenView)
+        vm.showingWidgets = tempShowingWidgets
+        vm.hiddenWidgets = tempHiddenWidgets
     }
     
-    
-    
-
     public var body: some View {
         ScrollView(showsIndicators: false) {
-            ForEach(0 ..< showingWidgets.count, id: \.self) { index in
-                self.showingWidgets[index]?.view
+            ForEach(0 ..< vm.showingWidgets.count, id: \.self) { index in
+                vm.showingWidgets[index]?.view
                     .padding()
             }
+            
             NavigationLink {
-                WidgetEditView(showingWidgets: $showingWidgets, hiddenWidgets: $hiddenWidgets, changeCompletion: changeCompletion)
+                WidgetEditView(vm: vm, changeCompletion: changeCompletion)
             } label: {
                 Text("편집").widgetTextStyle(padding: 15)
             }
-
         }
     }
-    
-    
 }
+
 

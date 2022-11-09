@@ -1,7 +1,7 @@
 import SwiftUI
 //import WidgetController
 
-struct ContentView: View {
+struct SampleView: View {
     
     @State private var widgetStateList: [(String, Bool)]
     
@@ -48,8 +48,8 @@ struct ContentView: View {
     }
 }
 
-struct ContentView_Previews: PreviewProvider {
+struct SampleView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        SampleView()
     }
 }

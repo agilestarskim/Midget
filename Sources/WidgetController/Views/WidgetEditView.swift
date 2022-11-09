@@ -1,8 +1,3 @@
-//  ViewBuilderTest
-//
-//  Created by 김민성 on 2022/11/05.
-//
-
 import SwiftUI
 
 
@@ -11,21 +6,18 @@ struct WidgetEditView: View {
     @State private var showingAddSheet = false
     @State private var showingRemoveAlert = false
     @State private var index = 0
-    @Binding var showingWidgets: [Widget?]
-    @Binding var hiddenWidgets: [Widget]
+    
+    @ObservedObject var vm: WidgetController.ViewModel
     let changeCompletion: ([(String, Bool)]) -> Void
+    
     
     var body: some View {
         ScrollView(showsIndicators: false){
-            ForEach(0..<showingWidgets.count, id: \.self){ index in
-                if (showingWidgets[index] != nil) {
-                    showingWidgets[index]?.view
-                        .editable{
-                            self.index = index
-                            showingRemoveAlert = true
-                        }
-                        .wiggle()
-                        .transition(.scale)
+            ForEach(0..<vm.showingWidgets.count, id: \.self){ index in
+                if (vm.showingWidgets[index] != nil) {
+                    GeometryReader{ geo in
+                        WidgetView(vm: vm, index: index, geo: geo, showingRemoveAlert: $showingRemoveAlert)
+                    }
                 }
             }
         }
@@ -54,39 +46,39 @@ struct WidgetEditView: View {
         .alert(isPresented: $showingRemoveAlert) {
             Alert(title: Text("위젯을 제거하겠습니까?"),
                   message: Text("이 위젯을 제거해도 데이터가 삭제되지 않습니다."),
-                  primaryButton: .destructive(Text("제거"), action: { withAnimation{ remove(index: index) } }),
+                  primaryButton: .destructive(Text("제거"), action: { withAnimation{ remove(index: vm.index) } }),
                   secondaryButton: .cancel(Text("취소"))
             )
         }
         .modify{
             if #available(iOS 16.0, * ){
                 $0.sheet(isPresented: $showingAddSheet){
-                    WidgetSheetView(showingWidgets: $showingWidgets, hiddenWidgets: $hiddenWidgets)
+                    WidgetSheetView(vm: vm)
                         .presentationDetents([.medium])
                 }
             }else {
                 $0.customBottomSheet(isPresented: $showingAddSheet){
-                    WidgetSheetView(showingWidgets: $showingWidgets, hiddenWidgets: $hiddenWidgets)
+                    WidgetSheetView(vm: vm)
                 }
             }
         }
     }
     
     func remove(index: Int) {
-        guard let widget = showingWidgets[index] else { return }
-        hiddenWidgets.append(widget)
-        showingWidgets[index] = nil
+        guard let widget = vm.showingWidgets[index] else { return }
+        vm.hiddenWidgets.append(widget)
+        vm.showingWidgets[index] = nil
     }
     
     func complete() {
         var showingTuples: [(String, Bool)] = []
         var hiddenTuples: [(String, Bool)] = []
-        for sw in showingWidgets {
+        for sw in vm.showingWidgets {
             if let sw = sw {
                 showingTuples.append((sw.id,  true))
             }
         }
-        for hw in hiddenWidgets {
+        for hw in vm.hiddenWidgets {
             hiddenTuples.append((hw.id, false))
         }
         
