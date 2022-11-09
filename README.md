@@ -5,11 +5,7 @@ you can add, delete and change order your own views
 
 # Screenshots
 
-## remove
-![ezgif com-gif-maker-2](https://user-images.githubusercontent.com/79740398/200291433-4a4c62e9-4388-409a-a6e4-ed34f28b15a1.gif)
-
-## add
-![ezgif com-gif-maker-3](https://user-images.githubusercontent.com/79740398/200292866-8a73c464-d762-45c4-8167-a83b473c6c41.gif)
+on taking..
 
 # Installing
 
@@ -21,33 +17,208 @@ https://github.com/agilestarskim/WidgetController.git
 
 # Usage
 
-import the package in the file you would like to use it
+## 1. Import the package in the file you would like to use it
 
 ```swift
 import WidgetController
 ```
 
-place WidgetController in the parent view
-
-**important: You shoud put WidgetController inside NavigationView !!**
+## 2. Set widget state list 
 
 ```swift
-Struct ContentView: View {
+@State private var widgetStateList: [(String, Bool)] = 
+[
+    ("viewA", true), 
+    ("viewB", false), 
+    ("viewC", true), 
+    ("viewD", false), 
+    ("viewE", true)
+]
+```
+Array's element order is widget's order. 
+
+Tuple's first element is ID of views.
+
+You can name it whatever you want.
+
+Tuple's second element is bool variable that define whether view is shown or not.
+
+If it's true, view will be shown.
+
+If it's false, view won't be shown.
+
+## 3. Define your own view
+
+here is a sample code
+
+```swift
+let viewA: some View  = RoundedRectangle(cornerRadius: 15).fill(.red).frame(height: 100)
+let viewB: some View  = RoundedRectangle(cornerRadius: 15).fill(.orange).frame(height: 100)
+let viewC: some View  = RoundedRectangle(cornerRadius: 15).fill(.green).frame(height: 100)
+let viewD: some View  = RoundedRectangle(cornerRadius: 15).fill(.blue).frame(height: 100)
+let viewE: some View  = RoundedRectangle(cornerRadius: 15).fill(.indigo).frame(height: 100)
+```
+
+## 4. Place WidgetController and embed it into the NavigationView
+
+```swift
     var body: some View {
+        //WidgetController has to be embedded in NavigationView
         NavigationView {
-            WidgetController {
-                YourCustomView()
-                YourCustomView()
-                YourCustomView()
+            WidgetController(
+                data: [],
+                widgets: []
+            ){ _ in
+                
             }
-        }   
+        }
     }
+```  
+if there is no navigation view, it won't work.
+
+## 5. Put proper data into the parameter
+
+```swift
+WidgetController(
+    data: widgetStateList,
+    widgets: [
+        Widget(view: AnyView(viewA), id: "viewA"),
+        Widget(view: AnyView(viewB), id: "viewB"),
+        Widget(view: AnyView(viewC), id: "viewC"),
+        Widget(view: AnyView(viewD), id: "viewD"),
+        Widget(view: AnyView(viewE), id: "viewE") 
+    ]
+){ _ in
+    
 }
 ```
 
+```swift
+Widget(view: AnyView(yourView), id: "yourViewKey")
+```
+Your view has to be covered by Widget with id. 
+
+Because widgetStateList tracks and finds your view by id.
+
+So don't forget to match Widget's id and Tuple's first string.
+
+## 6. Store permanently Widget's State
+
+You can save widget's state by using closure.
+
+It returns chaged widget state list when user complete editing.
+
+
+```swift
+WidgetController(
+    data: [],
+    widgets: []
+){ changedWidgetState in
+    //rerender view
+    widgetStateList = chagedWidgetStateList
+    //save widgetState as [String]
+    UserDefaults.standard.set(widgetStateList.encode(), forKey: "whateveryouwant")
+}
+```
+
+`.encode() : [(String, Bool)] -> [String]`
+
+
+And you can initialize widget state list  
+
+```swift
+init() {
+    let stringDataFromDB = UserDefaults.standard.array(forKey: "whateveryouwant") as? [String] ?? []
+    if stringDataFromDB.isEmpty {
+        //set default
+        self._widgetStateList = State(initialValue: [("viewA", true), ("viewB", false), ("viewC", true), ("viewD", false), ("viewE", true)])
+    }else {
+        //decode: [String] -> [(String, Bool)]
+        self._widgetStateList = State(initialValue: stringDataFromDB.decode())
+    }
+    
+}
+```
+`.decode() : [String] -> [(String, Bool)]`
+
+## 7. Try glassBackgound modifier
+
+```swift
+Widget(view: AnyView(viewA.glassBackground(padding: 10)), id: "viewA")
+```
+
+This view modifier will make it beautiful.
+
+# Sample Code 
+
+<details>   
+<summary>open</summary>
+
+Sample code is uploaded with package
+
+```swift
+import SwiftUI
+//import WidgetController
+
+struct ContentView: View {
+    
+    @State private var widgetStateList: [(String, Bool)]
+    
+    //load widgetStateList from DB
+    init() {
+        let stringDataFromDB = UserDefaults.standard.array(forKey: "whateveryouwant") as? [String] ?? []
+        if stringDataFromDB.isEmpty {
+            //set default state
+            self._widgetStateList = State(initialValue: [("viewA", true), ("viewB", false), ("viewC", true), ("viewD", false), ("viewE", true)])
+        }else {
+            //decode: [String] -> [(String, Bool)]
+            self._widgetStateList = State(initialValue: stringDataFromDB.decode())
+        }
+        
+    }
+    
+    //your custom view here
+    let viewA: some View  = RoundedRectangle(cornerRadius: 15).fill(.red).frame(height: 100)
+    let viewB: some View  = RoundedRectangle(cornerRadius: 15).fill(.orange).frame(height: 100)
+    let viewC: some View  = RoundedRectangle(cornerRadius: 15).fill(.green).frame(height: 100)
+    let viewD: some View  = RoundedRectangle(cornerRadius: 15).fill(.blue).frame(height: 100)
+    let viewE: some View  = RoundedRectangle(cornerRadius: 15).fill(.indigo).frame(height: 100)
+    
+    
+    var body: some View {
+        //WidgetController has to be embedded in NavigationView
+        NavigationView {
+            WidgetController(
+                data: widgetStateList,
+                widgets: [
+                    Widget(view: AnyView(viewA.glassBackground(padding: 10)), id: "viewA"),
+                    Widget(view: AnyView(viewB.glassBackground(padding: 10)), id: "viewB"),
+                    Widget(view: AnyView(viewC), id: "viewC"),
+                    Widget(view: AnyView(viewD), id: "viewD"),
+                    Widget(view: AnyView(viewE.glassBackground(padding: 10)), id: "viewE")
+                ]
+            ){ chagedWidgetStateList in
+                //rerender view
+                widgetStateList = chagedWidgetStateList
+                //save widgetState as [String]
+                UserDefaults.standard.set(widgetStateList.encode(), forKey: "whateveryouwant")
+            }
+        }
+    }
+}
+
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+    }
+}
+
+```
+
+</details>
+
 # Todo
 
-* permanent storage 
 * switching view order
 * flexible layout
 * mutiple language support

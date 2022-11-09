@@ -13,7 +13,7 @@ public struct Widget{
     
     
     public init(view: AnyView, id: String) {
-        self.view = AnyView(view.glassBackground())
+        self.view = view
         self.id = id
     }
     

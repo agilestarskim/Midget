@@ -1,21 +1,19 @@
-//
-//  File.swift
-//  
-//
-//  Created by 김민성 on 2022/11/06.
-//
-
 import SwiftUI
 
 extension View {
-    public func glassBackground() -> some View {
-        modifier(GlassBackground())
+    public func glassBackground(padding: Int = 0) -> some View {
+        modifier(GlassBackground(padding: padding))
     }
 }
 
 public struct GlassBackground: ViewModifier {
+    let padding: CGFloat
+    init(padding: Int) {
+        self.padding = CGFloat(padding)
+    }
     public func body(content: Content) -> some View {
         content
+            .padding(padding)
             .background(RoundedRectangle(cornerRadius: 15)
                 .fill(.regularMaterial))
     }
