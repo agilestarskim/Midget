@@ -211,24 +211,22 @@ struct ContentView: View {
     
     
     var body: some View {
-        //WidgetController has to be embedded in NavigationView
-        NavigationView {
-            WidgetController(
-                data: widgetStateList,
-                widgets: [
-                    Widget(view: AnyView(viewA.glassBackground(padding: 10)), id: "viewA"),
-                    Widget(view: AnyView(viewB.glassBackground(padding: 10)), id: "viewB"),
-                    Widget(view: AnyView(viewC), id: "viewC"),
-                    Widget(view: AnyView(viewD), id: "viewD"),
-                    Widget(view: AnyView(viewE.glassBackground(padding: 10)), id: "viewE")
-                ]
-            ){ chagedWidgetStateList in
-                //rerender view
-                widgetStateList = chagedWidgetStateList
-                //save widgetState as [String]
-                UserDefaults.standard.set(widgetStateList.encode(), forKey: "whateveryouwant")
-            }
+        WidgetController(
+            data: widgetStateList,
+            widgets: [
+                Widget(view: AnyView(viewA.glassBackground(padding: 10)), id: "viewA"),
+                Widget(view: AnyView(viewB.glassBackground(padding: 10)), id: "viewB"),
+                Widget(view: AnyView(viewC), id: "viewC"),
+                Widget(view: AnyView(viewD), id: "viewD"),
+                Widget(view: AnyView(viewE.glassBackground(padding: 10)), id: "viewE")
+            ]
+        ){ chagedWidgetStateList in
+            //rerender view
+            widgetStateList = chagedWidgetStateList
+            //save widgetState as [String]
+            UserDefaults.standard.set(widgetStateList.encode(), forKey: "whateveryouwant")
         }
+        
     }
 }
 
