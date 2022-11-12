@@ -1,32 +1,20 @@
 import SwiftUI
 
 extension View {
-    public func widgetButtonStyle() -> some View {
-        modifier(WidgetButtonStyle())
-    }
-    
-    public func widgetTextStyle(padding: Int) -> some View {
-        modifier(WidgetTextStyle(padding: padding))
+    public func widgetButtonStyle(padding: Int) -> some View {
+        modifier(WidgetButtonStyle(padding: padding))
     }
 }
 
 struct WidgetButtonStyle: ViewModifier {
-    public func body(content: Content) -> some View {
-        content
-            .foregroundColor(Color.primary)
-            .buttonStyle(.bordered)
-            .buttonBorderShape(.capsule) 
-    }
-}
-
-struct WidgetTextStyle: ViewModifier {
     let padding: Int
     func body(content: Content) -> some View {
         content
+            .font(.system(size: 17, weight: .bold))
             .padding(.horizontal, CGFloat(padding))
             .padding(.vertical, 5)
-            .foregroundColor(Color.primary.opacity(0.7))
-            .background(Capsule().fill(Color.secondary.opacity(0.7)))
+            .foregroundColor(Color.primary.opacity(0.8))
+            .background(Capsule().fill(.ultraThickMaterial))
     }
 }
 

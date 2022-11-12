@@ -59,22 +59,18 @@ let viewD: some View  = RoundedRectangle(cornerRadius: 15).fill(.blue).frame(hei
 let viewE: some View  = RoundedRectangle(cornerRadius: 15).fill(.indigo).frame(height: 100)
 ```
 
-## 4. Place WidgetController and embed it into the NavigationView
+## 4. Place WidgetController
 
 ```swift
     var body: some View {
-        //WidgetController has to be embedded in NavigationView
-        NavigationView {
-            WidgetController(
-                data: [],
-                widgets: []
-            ){ _ in
-                
-            }
+        WidgetController(
+            data: [],
+            widgets: []
+        ){ _ in
+            
         }
     }
 ```  
-if there is no navigation view, it won't work.
 
 ## 5. Put proper data into the parameter
 

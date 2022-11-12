@@ -1,6 +1,7 @@
 import SwiftUI
 
-public struct Widget {
+public struct Widget{
+    
     let view: AnyView
     let id: String
     
@@ -10,3 +11,4 @@ public struct Widget {
     }
     
 }
+

@@ -2,44 +2,43 @@ import SwiftUI
 
 
 struct WidgetEditView: View {
-    @Environment(\.dismiss) var dismiss
-    @State private var showingAddSheet = false
-    @State private var showingRemoveAlert = false
-    @State private var index = 0
-    
     @ObservedObject var vm: WidgetController.ViewModel
     let changeCompletion: ([(String, Bool)]) -> Void
     
+    @Binding var isEditMode: Bool
+    @State private var showingAddSheet = false
+    @State private var showingRemoveAlert = false
     
     var body: some View {
-        ScrollView(showsIndicators: false){
-            ForEach(0..<vm.showingWidgets.count, id: \.self){ index in
-                if (vm.showingWidgets[index] != nil) {
-                    GeometryReader{ geo in
-                        WidgetView(vm: vm, index: index, geo: geo, showingRemoveAlert: $showingRemoveAlert)
-                    }
-                }
-            }
-        }
-        .toolbar{
-            ToolbarItem(placement: .navigationBarLeading){
+        VStack{
+            HStack {
                 Button{
                     showingAddSheet = true
                 } label: {
                     Text("+")
-                        .widgetTextStyle(padding: 25)
+                        .widgetButtonStyle(padding: 25)
                 }
-            }
-            ToolbarItem(placement: .navigationBarTrailing){
+                
+                Spacer()
+                
                 Button{
                     complete()
-                    dismiss()
+                    isEditMode = false
                 } label: {
                     Text("완료")
-                        .widgetTextStyle(padding: 20)
+                        .widgetButtonStyle(padding: 20)
                 }
                 
             }
+            .padding(.horizontal, 10)
+            ForEach(0..<vm.showingWidgets.count, id: \.self){ index in
+                if (vm.showingWidgets[index] != nil) {
+                    WidgetView(vm: vm, index: index, showingRemoveAlert: $showingRemoveAlert)
+                        .padding()
+                        .transition(.scale)
+                }
+            }
+            
         }
         .navigationBarBackButtonHidden(true)
         .navigationBarTitleDisplayMode(.inline)
