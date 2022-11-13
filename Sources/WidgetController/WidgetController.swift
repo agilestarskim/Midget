@@ -65,12 +65,12 @@ public struct WidgetController: View {
                             isEditMode = true
                         }.widgetButtonStyle(padding: 15)
                     }
-                }else{
-                    WidgetEditView(vm: vm, changeCompletion: changeCompletion, isEditMode: $isEditMode)
                 }
-                
+                else {
+                    WidgetEditView(vm: vm, changeCompletion: changeCompletion, isEditMode: $isEditMode)
+                        .coordinateSpace(name: "editView")
+                }
             }
-           
         }
     }
 }

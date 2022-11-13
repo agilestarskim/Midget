@@ -30,18 +30,17 @@ struct WidgetEditView: View {
                 }
                 
             }
-            .padding(.horizontal, 10)
+            .padding(.horizontal)
             ForEach(0..<vm.showingWidgets.count, id: \.self){ index in
                 if (vm.showingWidgets[index] != nil) {
                     WidgetView(vm: vm, index: index, showingRemoveAlert: $showingRemoveAlert)
                         .padding()
                         .transition(.scale)
+                
                 }
             }
             
         }
-        .navigationBarBackButtonHidden(true)
-        .navigationBarTitleDisplayMode(.inline)
         .alert(isPresented: $showingRemoveAlert) {
             Alert(title: Text("위젯을 제거하겠습니까?"),
                   message: Text("이 위젯을 제거해도 데이터가 삭제되지 않습니다."),

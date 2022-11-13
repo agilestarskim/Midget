@@ -24,6 +24,5 @@ struct EditableModifier: ViewModifier {
                     onTouch()
                 }
         }
-        //.padding()
     }
 }

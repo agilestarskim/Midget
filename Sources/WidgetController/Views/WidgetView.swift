@@ -38,8 +38,15 @@ struct WidgetView: View {
     @GestureState var dragState = DragState.inactive
     @ObservedObject var vm: WidgetController.ViewModel
     let index: Int
-    @State var geo: GeometryProxy? = nil
     @Binding var showingRemoveAlert: Bool
+    @State var geoProxy: GeometryProxy? = nil
+    
+    var position: CGPoint {
+        return CGPoint(
+            x: geoProxy?.frame(in: .named("editView")).midX ?? 0,
+            y: geoProxy?.frame(in: .named("editView")).midY ?? 0
+        )
+    }
     
     var body: some View {
         
@@ -73,28 +80,42 @@ struct WidgetView: View {
 //            .onEnded { value in
 //                guard case .second(true, let drag?) = value else { return }
 //            }
-        
-        VStack {
-            if !dragState.isDragging {
+        VStack{
+            if dragState.isDragging {
+                vm.showingWidgets[index]?.view
+                    .background(GeometryReader { geo in
+                        Color.clear
+                            .preference(key: GeometryPreferenceKey.self, value: geo)
+                    })
+                    .offset(dragState.translation)
+                    .animation(.linear(duration: 0.1), value: dragState.translation)
+                    
+            }
+            else{
                 vm.showingWidgets[index]?.view
                     .editable{
                         vm.index = index
                         showingRemoveAlert = true
                     }
                     .wiggle()
-            }
-            else{
-                vm.showingWidgets[index]?.view
-                    .offset(dragState.translation)
-                    .animation(.linear(duration: 0.1), value: dragState.translation)
+                    .background(GeometryReader { geo in
+                        Color.clear
+                            .preference(key: GeometryPreferenceKey.self, value: geo)
+                            .onAppear{
+                               //TODO: set midY
+                            }
+                    })
+
             }
         }
-        
         .zIndex(dragState.isActive ? 1 : 0)
         .scaleEffect(dragState.isActive ? 1.05 : 1.0)
         .animation(.linear(duration: 0.1), value: dragState.isActive)
         .onTapGesture { }
         .gesture(longPressDrag)
-        
+        .onPreferenceChange(GeometryPreferenceKey.self) { value in
+            guard let value = value else { return }
+            geoProxy = value
+        }
     }
 }
