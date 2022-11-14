@@ -34,28 +34,47 @@ struct WidgetView: View {
             }
         }
     }
-        
+    enum ScrollState {
+        case up
+        case normal
+        case down
+    }
     @GestureState var dragState = DragState.inactive
     @ObservedObject var vm: WidgetController.ViewModel
     let index: Int
     @Binding var showingRemoveAlert: Bool
     @State var geoProxy: GeometryProxy? = nil
+    @State private var scrollState: ScrollState = .normal
     
-    var position: CGPoint {
-        return CGPoint(
-            x: geoProxy?.frame(in: .named("editView")).midX ?? 0,
-            y: geoProxy?.frame(in: .named("editView")).midY ?? 0
-        )
+    var editFrame: CGRect {
+        return geoProxy?.frame(in: .named("editView")) ?? CGRect()
     }
+    
+    var globalFrame: CGRect {
+        return geoProxy?.frame(in: .named("globalView")) ?? CGRect()
+    }
+
     
     var body: some View {
         
         let dragGesture = DragGesture()
-            .onChanged{ _ in
+            .onChanged{ drag in
+        
+                //상단에 닿을 때
+                guard globalFrame != .zero else { return }
+                guard abs(drag.translation.height) > 20 else { return }
+                if globalFrame.minY < 10  {
+                    scrollState = .up
+                }
+                //하단에 닿을 때
+                if vm.globalScreenSize.height - globalFrame.maxY < 10 {
+                    scrollState = .down
+                }
+
                 //TODO: Check switch
             }
         
-        let longPressDrag = LongPressGesture(minimumDuration: 0.1)
+        let longPressDrag = LongPressGesture()
             .sequenced(before: dragGesture)
             .updating($dragState) { value, state, transaction in
                 switch value {
@@ -74,12 +93,15 @@ struct WidgetView: View {
                     }
                 // Dragging ended or the long press cancelled.
                 default:
+                    // will be not excuted i don't know why
                     state = .inactive
                 }
             }
-//            .onEnded { value in
-//                guard case .second(true, let drag?) = value else { return }
-//            }
+            .onEnded { value in
+                guard case .second(true, _) = value else { return }
+                scrollState = .normal
+            }
+        
         VStack{
             if dragState.isDragging {
                 vm.showingWidgets[index]?.view
@@ -101,9 +123,6 @@ struct WidgetView: View {
                     .background(GeometryReader { geo in
                         Color.clear
                             .preference(key: GeometryPreferenceKey.self, value: geo)
-                            .onAppear{
-                               //TODO: set midY
-                            }
                     })
 
             }
@@ -116,6 +135,19 @@ struct WidgetView: View {
         .onPreferenceChange(GeometryPreferenceKey.self) { value in
             guard let value = value else { return }
             geoProxy = value
+        }
+        .onChange(of: scrollState){ ss in
+            if ss == .up {
+                withAnimation{
+                    vm.scrollViewProxy?.scrollTo("start", anchor: .top)
+                }
+            }
+            
+            if ss == .down {
+                withAnimation{
+                    vm.scrollViewProxy?.scrollTo("end", anchor: .bottom)
+                }
+            }
         }
     }
 }

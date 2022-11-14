@@ -9,6 +9,5 @@ public struct Widget{
         self.view = view
         self.id = id
     }
-    
 }
 

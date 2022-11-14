@@ -11,6 +11,7 @@ struct WidgetEditView: View {
     
     var body: some View {
         VStack{
+            Color.clear.id("start")
             HStack {
                 Button{
                     showingAddSheet = true
@@ -31,14 +32,16 @@ struct WidgetEditView: View {
                 
             }
             .padding(.horizontal)
+            
             ForEach(0..<vm.showingWidgets.count, id: \.self){ index in
                 if (vm.showingWidgets[index] != nil) {
                     WidgetView(vm: vm, index: index, showingRemoveAlert: $showingRemoveAlert)
                         .padding()
                         .transition(.scale)
-                
+
                 }
             }
+            Color.clear.id("end")
             
         }
         .alert(isPresented: $showingRemoveAlert) {
@@ -60,6 +63,7 @@ struct WidgetEditView: View {
                 }
             }
         }
+        
     }
     
     func remove(index: Int) {
