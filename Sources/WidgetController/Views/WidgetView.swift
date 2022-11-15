@@ -49,6 +49,8 @@ struct WidgetView: View {
     @GestureState var dragState = DragState.inactive
     @State private var scrollState: ScrollState = .normal
     @State private var indexForScroll = 0
+    
+    
     var editFrame: CGRect {
         return geoProxy?.frame(in: .named("editView")) ?? CGRect()
     }
@@ -56,7 +58,9 @@ struct WidgetView: View {
     var globalFrame: CGRect {
         return geoProxy?.frame(in: .named("globalView")) ?? CGRect()
     }
-
+    var id: String {
+        vm.showingWidgets[index]!.id
+    }
     
     var body: some View {
         
@@ -64,6 +68,7 @@ struct WidgetView: View {
             .onChanged{ drag in
                 
                 guard globalFrame != .zero else { return }
+                guard editFrame != .zero else { return }
                 guard abs(drag.translation.height) > 20 else { return }
                 
                 if globalFrame.minY < 0 {
@@ -76,9 +81,13 @@ struct WidgetView: View {
                     scrollState = .normal
                 }
                 //TODO: Check switch
+                vm.selectedFrame = editFrame
+                vm.detectCollision(id: self.id)
             }
         
-        let longPressDrag = LongPressGesture().onEnded { _ in indexForScroll = index}
+        let longPressDrag = LongPressGesture().onEnded { _ in
+            vm.tempPosition = CGPoint(x: editFrame.midX, y: editFrame.midY)
+            indexForScroll = index }
             .sequenced(before: dragGesture)
             .updating($dragState) { value, state, transaction in
                 switch value {
@@ -91,6 +100,7 @@ struct WidgetView: View {
                     if drag?.translation == nil {
                         vm.feedback.prepare()
                         state = .pressing
+                        
                         vm.feedback.impactOccurred()
                     }else {
                         state = .dragging(translation: drag?.translation ?? .zero)
@@ -119,18 +129,25 @@ struct WidgetView: View {
             }
             else{
                 vm.showingWidgets[index]?.view
+                    .background(GeometryReader { geo in
+                        Color.clear
+                            .preference(key: GeometryPreferenceKey.self, value: geo)
+                            .onAppear {
+                                guard let id = vm.showingWidgets[index]?.id else { return }
+                                vm.showingWidgetsGeo.updateValue(geo, forKey: id)
+                            }
+                            
+                    })
                     .editable{
                         vm.index = index
                         showingRemoveAlert = true
                     }
                     .wiggle()
-                    .background(GeometryReader { geo in
-                        Color.clear
-                            .preference(key: GeometryPreferenceKey.self, value: geo)
-                    })
+                    
 
             }
         }
+        
         .zIndex(dragState.isActive ? 1 : 0)
         .scaleEffect(dragState.isActive ? 1.05 : 1.0)
         .animation(.linear(duration: 0.1), value: dragState.isActive)
@@ -147,6 +164,13 @@ struct WidgetView: View {
                 scrollToDown()
             }
         }
+        .onChange(of: vm.collidedWidget){ widget in
+            //guard let widget = widget else { return }
+            //TODO: Switch!!
+            
+        }
+        
+        
     }
     
     func scrollToUP() {
@@ -176,4 +200,6 @@ struct WidgetView: View {
             }
         })
     }
+    
+    
 }

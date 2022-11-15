@@ -5,10 +5,33 @@ extension WidgetController {
         @Published var showingWidgets: [Widget?] = []
         @Published var hiddenWidgets: [Widget] = []
         @Published var index: Int = 0
-        @Published var showingWidgetsGeo: [GeometryProxy] = []
+        var showingWidgetsGeo: [String : GeometryProxy] = [:]
         let feedback = UIImpactFeedbackGenerator(style: .medium)
         var scrollViewProxy: ScrollViewProxy? = nil
-        @Published var globalScreenSize: CGSize = .zero
+        var globalScreenSize: CGSize = .zero
+        
+        @Published var collidedWidget: Widget? = nil
+        var tempPosition: CGPoint = CGPoint()
+        var selectedFrame: CGRect = CGRect()
+        
+        func detectCollision(id: String) {
+            
+            for widget in showingWidgets {
+                guard let widget = widget else { continue }
+                if widget.id == id { continue }
+                let point = CGPoint(
+                    x: showingWidgetsGeo[widget.id]?.frame(in: .named("editView")).midX ?? 0,
+                    y: showingWidgetsGeo[widget.id]?.frame(in: .named("editView")).midY ?? 0
+                )
+                
+                
+                if selectedFrame.contains(point) {
+                    collidedWidget = widget
+                }
+            }
+            
+        }
+        
     }
 }
 
