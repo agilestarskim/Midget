@@ -39,13 +39,16 @@ struct WidgetView: View {
         case normal
         case down
     }
-    @GestureState var dragState = DragState.inactive
+    
+    
     @ObservedObject var vm: WidgetController.ViewModel
     let index: Int
     @Binding var showingRemoveAlert: Bool
-    @State var geoProxy: GeometryProxy? = nil
-    @State private var scrollState: ScrollState = .normal
     
+    @State var geoProxy: GeometryProxy? = nil
+    @GestureState var dragState = DragState.inactive
+    @State private var scrollState: ScrollState = .normal
+    @State private var indexForScroll = 0
     var editFrame: CGRect {
         return geoProxy?.frame(in: .named("editView")) ?? CGRect()
     }
@@ -59,22 +62,23 @@ struct WidgetView: View {
         
         let dragGesture = DragGesture()
             .onChanged{ drag in
-        
-                //상단에 닿을 때
+                
                 guard globalFrame != .zero else { return }
                 guard abs(drag.translation.height) > 20 else { return }
-                if globalFrame.minY < 10  {
+                
+                if globalFrame.minY < 0 {
                     scrollState = .up
                 }
-                //하단에 닿을 때
-                if vm.globalScreenSize.height - globalFrame.maxY < 10 {
+                else if vm.globalScreenSize.height - globalFrame.maxY < 0 {
                     scrollState = .down
                 }
-
+                else {
+                    scrollState = .normal
+                }
                 //TODO: Check switch
             }
         
-        let longPressDrag = LongPressGesture()
+        let longPressDrag = LongPressGesture().onEnded { _ in indexForScroll = index}
             .sequenced(before: dragGesture)
             .updating($dragState) { value, state, transaction in
                 switch value {
@@ -138,16 +142,38 @@ struct WidgetView: View {
         }
         .onChange(of: scrollState){ ss in
             if ss == .up {
-                withAnimation{
-                    vm.scrollViewProxy?.scrollTo("start", anchor: .top)
-                }
-            }
-            
-            if ss == .down {
-                withAnimation{
-                    vm.scrollViewProxy?.scrollTo("end", anchor: .bottom)
-                }
+                scrollToUP()
+            } else if ss == .down {
+                scrollToDown()
             }
         }
+    }
+    
+    func scrollToUP() {
+        Timer.scheduledTimer(withTimeInterval: 0.4, repeats: true, block: { Timer in
+            if indexForScroll > 0  && scrollState == .up {
+                indexForScroll = indexForScroll - 1
+                withAnimation {
+                    vm.scrollViewProxy?.scrollTo(indexForScroll)
+                }
+            }else {
+                Timer.invalidate()
+            }
+            
+        })
+    }
+    
+    func scrollToDown() {
+        Timer.scheduledTimer(withTimeInterval: 0.4, repeats: true, block: { Timer in
+            if indexForScroll < vm.showingWidgets.count - 1 && scrollState == .down {
+                indexForScroll = indexForScroll + 1
+                withAnimation {
+                    vm.scrollViewProxy?.scrollTo(indexForScroll)
+                }
+
+            }else{
+                Timer.invalidate()
+            }
+        })
     }
 }
