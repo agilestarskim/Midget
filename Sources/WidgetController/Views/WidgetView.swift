@@ -150,7 +150,7 @@ struct WidgetView: View {
     }
     
     func scrollToUP() {
-        Timer.scheduledTimer(withTimeInterval: 0.4, repeats: true, block: { Timer in
+        Timer.scheduledTimer(withTimeInterval: 0.2, repeats: true, block: { Timer in
             if indexForScroll > 0  && scrollState == .up {
                 indexForScroll = indexForScroll - 1
                 withAnimation {
@@ -164,7 +164,7 @@ struct WidgetView: View {
     }
     
     func scrollToDown() {
-        Timer.scheduledTimer(withTimeInterval: 0.4, repeats: true, block: { Timer in
+        Timer.scheduledTimer(withTimeInterval: 0.2, repeats: true, block: { Timer in
             if indexForScroll < vm.showingWidgets.count - 1 && scrollState == .down {
                 indexForScroll = indexForScroll + 1
                 withAnimation {

@@ -11,7 +11,6 @@ struct WidgetEditView: View {
     
     var body: some View {
         VStack{
-            Color.clear.id("start")
             HStack {
                 Button{
                     showingAddSheet = true
@@ -41,7 +40,6 @@ struct WidgetEditView: View {
 
                 }
             }
-            Color.clear.id("end")
             
         }
         .alert(isPresented: $showingRemoveAlert) {
@@ -63,7 +61,6 @@ struct WidgetEditView: View {
                 }
             }
         }
-        
     }
     
     func remove(index: Int) {
