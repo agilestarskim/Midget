@@ -7,8 +7,7 @@ struct WidgetEditView: View {
     
     @Binding var isEditMode: Bool
     @State private var showingAddSheet = false
-    @State private var showingRemoveAlert = false
-    
+ 
     var body: some View {
         VStack{
             HStack {
@@ -34,20 +33,18 @@ struct WidgetEditView: View {
             
             ForEach(0..<vm.showingWidgets.count, id: \.self){ index in
                 if (vm.showingWidgets[index] != nil) {
-                    WidgetView(vm: vm, index: index, showingRemoveAlert: $showingRemoveAlert)
+                    WidgetView(vm: vm, index: index)
                         .padding()
                         .transition(.scale)
-
                 }
             }
             
         }
-        .alert(isPresented: $showingRemoveAlert) {
-            Alert(title: Text("위젯을 제거하겠습니까?"),
-                  message: Text("이 위젯을 제거해도 데이터가 삭제되지 않습니다."),
-                  primaryButton: .destructive(Text("제거"), action: { withAnimation{ remove(index: vm.index) } }),
-                  secondaryButton: .cancel(Text("취소"))
-            )
+        .alert("위젯을 제거하시겠습니까?", isPresented: $vm.showingRemoveAlert) {
+            Button("취소", role: .cancel){}
+            Button("삭제", role: .destructive){withAnimation{remove()}}
+        } message: {
+            Text("이 위젯을 제거해도 데이터가 삭제되지 않습니다.")
         }
         .modify{
             if #available(iOS 16.0, * ){
@@ -61,12 +58,12 @@ struct WidgetEditView: View {
                 }
             }
         }
+        
     }
-    
-    func remove(index: Int) {
-        guard let widget = vm.showingWidgets[index] else { return }
+    func remove() {
+        guard let widget = vm.showingWidgets[vm.index] else { return }
         vm.hiddenWidgets.append(widget)
-        vm.showingWidgets[index] = nil
+        vm.showingWidgets[vm.index] = nil
     }
     
     func complete() {
@@ -84,6 +81,8 @@ struct WidgetEditView: View {
         changeCompletion(showingTuples + hiddenTuples)
         
     }
+    
+    
 }
 
 //version branch

@@ -2,36 +2,54 @@ import SwiftUI
 
 extension WidgetController {
     class ViewModel: ObservableObject {
+        
+        enum MovingDirection {
+            case none // not create any space
+            case upward // create space on the view
+            case downward // create space under the view
+        }
+        
         @Published var showingWidgets: [Widget?] = []
         @Published var hiddenWidgets: [Widget] = []
-        @Published var index: Int = 0
+        
+        
         var showingWidgetsGeo: [String : GeometryProxy] = [:]
+        @Published var collidedWidget: Widget? = nil
+        @Published var movingDirection: MovingDirection = .none
+        
+        var selectedMovingFrame: CGRect = CGRect()
+        var selectedFixedFrame: CGRect = CGRect()
+        
         let feedback = UIImpactFeedbackGenerator(style: .medium)
         var scrollViewProxy: ScrollViewProxy? = nil
         var globalScreenSize: CGSize = .zero
+        @Published var showingRemoveAlert = false
+        var index: Int = -1
         
-        @Published var collidedWidget: Widget? = nil
-        var tempPosition: CGPoint = CGPoint()
-        var selectedFrame: CGRect = CGRect()
         
         func detectCollision(id: String) {
-            
+
             for widget in showingWidgets {
                 guard let widget = widget else { continue }
                 if widget.id == id { continue }
-                let point = CGPoint(
-                    x: showingWidgetsGeo[widget.id]?.frame(in: .named("editView")).midX ?? 0,
-                    y: showingWidgetsGeo[widget.id]?.frame(in: .named("editView")).midY ?? 0
-                )
                 
+                guard let collidedFrame = showingWidgetsGeo[widget.id]?.frame(in: .named("editView")) else { return }
                 
-                if selectedFrame.contains(point) {
-                    collidedWidget = widget
+                if selectedMovingFrame.contains(CGPoint(x: collidedFrame.midX, y: collidedFrame.midY)) {
+        
+                    withAnimation {
+                        collidedWidget = widget
+                        if selectedMovingFrame.midY > collidedFrame.midY {
+                            movingDirection = .downward
+                        }else {
+                            movingDirection = .upward
+                        }
+                    }
+                    return
                 }
             }
             
         }
-        
     }
 }
 
@@ -70,6 +88,7 @@ public struct WidgetController: View {
         
         vm.showingWidgets = tempShowingWidgets
         vm.hiddenWidgets = tempHiddenWidgets
+     
     }
     
     public var body: some View {

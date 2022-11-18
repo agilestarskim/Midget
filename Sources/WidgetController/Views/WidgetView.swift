@@ -40,17 +40,14 @@ struct WidgetView: View {
         case down
     }
     
-    
     @ObservedObject var vm: WidgetController.ViewModel
     let index: Int
-    @Binding var showingRemoveAlert: Bool
-    
+ 
     @State var geoProxy: GeometryProxy? = nil
     @GestureState var dragState = DragState.inactive
     @State private var scrollState: ScrollState = .normal
     @State private var indexForScroll = 0
-    
-    
+
     var editFrame: CGRect {
         return geoProxy?.frame(in: .named("editView")) ?? CGRect()
     }
@@ -58,6 +55,7 @@ struct WidgetView: View {
     var globalFrame: CGRect {
         return geoProxy?.frame(in: .named("globalView")) ?? CGRect()
     }
+    
     var id: String {
         vm.showingWidgets[index]!.id
     }
@@ -70,7 +68,7 @@ struct WidgetView: View {
                 guard globalFrame != .zero else { return }
                 guard editFrame != .zero else { return }
                 guard abs(drag.translation.height) > 20 else { return }
-                
+                //TODO: 걸쳐있는 뷰 예외처리
                 if globalFrame.minY < 0 {
                     scrollState = .up
                 }
@@ -81,13 +79,17 @@ struct WidgetView: View {
                     scrollState = .normal
                 }
                 //TODO: Check switch
-                vm.selectedFrame = editFrame
+                vm.selectedMovingFrame = editFrame
                 vm.detectCollision(id: self.id)
+                
             }
         
         let longPressDrag = LongPressGesture().onEnded { _ in
-            vm.tempPosition = CGPoint(x: editFrame.midX, y: editFrame.midY)
-            indexForScroll = index }
+                withAnimation{
+                    vm.selectedFixedFrame = editFrame
+                    indexForScroll = index
+                }
+            }
             .sequenced(before: dragGesture)
             .updating($dragState) { value, state, transaction in
                 switch value {
@@ -100,9 +102,8 @@ struct WidgetView: View {
                     if drag?.translation == nil {
                         vm.feedback.prepare()
                         state = .pressing
-                        
                         vm.feedback.impactOccurred()
-                    }else {
+                    } else {
                         state = .dragging(translation: drag?.translation ?? .zero)
                     }
                 // Dragging ended or the long press cancelled.
@@ -113,7 +114,12 @@ struct WidgetView: View {
             }
             .onEnded { value in
                 guard case .second(true, _) = value else { return }
-                scrollState = .normal
+                withAnimation{
+                    scrollState = .normal
+                    vm.collidedWidget = nil
+                    vm.movingDirection = .none
+                }
+                
             }
         
         VStack{
@@ -122,32 +128,45 @@ struct WidgetView: View {
                     .background(GeometryReader { geo in
                         Color.clear
                             .preference(key: GeometryPreferenceKey.self, value: geo)
+                            
                     })
                     .offset(dragState.translation)
                     .animation(.linear(duration: 0.1), value: dragState.translation)
+                    .frame(height: vm.collidedWidget == nil ? vm.selectedFixedFrame.height : 0)
                     
             }
             else{
-                vm.showingWidgets[index]?.view
-                    .background(GeometryReader { geo in
+                VStack {
+                    if vm.collidedWidget == vm.showingWidgets[index] && vm.movingDirection == .upward {
                         Color.clear
-                            .preference(key: GeometryPreferenceKey.self, value: geo)
-                            .onAppear {
-                                guard let id = vm.showingWidgets[index]?.id else { return }
-                                vm.showingWidgetsGeo.updateValue(geo, forKey: id)
-                            }
-                            
-                    })
-                    .editable{
-                        vm.index = index
-                        showingRemoveAlert = true
+                            .frame(height: vm.selectedFixedFrame.height) 
                     }
-                    .wiggle()
                     
-
+                    vm.showingWidgets[index]?.view
+                        .background(GeometryReader { geo in
+                            Color.clear
+                                .preference(key: GeometryPreferenceKey.self, value: geo)
+                                .onAppear {
+                                    guard let id = vm.showingWidgets[index]?.id else { return }
+                                    vm.showingWidgetsGeo.updateValue(geo, forKey: id)
+                                }
+                        })
+                        .editable{
+                            vm.index = index
+                            vm.showingRemoveAlert = true
+                        }
+                        .wiggle()
+                        
+                    
+                    if vm.collidedWidget == vm.showingWidgets[index] && vm.movingDirection == .downward {
+                        Color.clear
+                            .frame(height: vm.selectedFixedFrame.height)
+                    }
+                    
+                }
+                
             }
         }
-        
         .zIndex(dragState.isActive ? 1 : 0)
         .scaleEffect(dragState.isActive ? 1.05 : 1.0)
         .animation(.linear(duration: 0.1), value: dragState.isActive)
@@ -164,17 +183,12 @@ struct WidgetView: View {
                 scrollToDown()
             }
         }
-        .onChange(of: vm.collidedWidget){ widget in
-            //guard let widget = widget else { return }
-            //TODO: Switch!!
-            
-        }
         
         
     }
     
     func scrollToUP() {
-        Timer.scheduledTimer(withTimeInterval: 0.2, repeats: true, block: { Timer in
+        Timer.scheduledTimer(withTimeInterval: 0.3, repeats: true, block: { Timer in
             if indexForScroll > 0  && scrollState == .up {
                 indexForScroll = indexForScroll - 1
                 withAnimation {
@@ -188,7 +202,7 @@ struct WidgetView: View {
     }
     
     func scrollToDown() {
-        Timer.scheduledTimer(withTimeInterval: 0.2, repeats: true, block: { Timer in
+        Timer.scheduledTimer(withTimeInterval: 0.3, repeats: true, block: { Timer in
             if indexForScroll < vm.showingWidgets.count - 1 && scrollState == .down {
                 indexForScroll = indexForScroll + 1
                 withAnimation {
@@ -200,6 +214,10 @@ struct WidgetView: View {
             }
         })
     }
+    
+    
+    
+    
     
     
 }
