@@ -113,11 +113,10 @@ struct WidgetView: View {
             }
             .onEnded { value in
                 guard case .second(true, _) = value else { return }
-                withAnimation{
-                    scrollState = .normal
-                    vm.collidedWidget = nil
-                    vm.movingDirection = .none
-                }
+                scrollState = .normal
+                vm.swapWidget()
+                vm.initialize()
+                
                 
             }
         
@@ -131,7 +130,7 @@ struct WidgetView: View {
                     })
                     .offset(dragState.translation)
                     .animation(.linear(duration: 0.1), value: dragState.translation)
-                    .frame(height: vm.movingDirection == .none ? vm.selectedFixedFrame.height : 0)
+                    .frame(height: vm.collidedWidget == nil ? vm.selectedFixedFrame.height : 0)
             }
             else{
                 VStack {
@@ -150,7 +149,7 @@ struct WidgetView: View {
                                 }
                         })
                         .editable{
-                            vm.index = index
+                            vm.setIndexForRemove(index: index)
                             vm.showingRemoveAlert = true
                         }
                         .wiggle()
@@ -181,9 +180,6 @@ struct WidgetView: View {
                 scrollToDown()
             }
         }
-        
-        
-        
     }
     
     func scrollToUP() {
@@ -213,10 +209,6 @@ struct WidgetView: View {
             }
         })
     }
-    
-    
-    
-    
-    
+
     
 }

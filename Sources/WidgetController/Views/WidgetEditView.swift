@@ -39,6 +39,8 @@ struct WidgetEditView: View {
                             .transition(.scale)
                     }
                 }
+                   
+                
                 
             }
             .coordinateSpace(name: "editView")
@@ -48,7 +50,7 @@ struct WidgetEditView: View {
             }
         }
         .alert("위젯을 제거하시겠습니까?", isPresented: $vm.showingRemoveAlert) {
-            Button("취소", role: .cancel){}
+            Button("취소", role: .cancel){ vm.setIndexForRemove(index: -1)}
             Button("삭제", role: .destructive){withAnimation{vm.remove()}}
         } message: {
             Text("이 위젯을 제거해도 데이터가 삭제되지 않습니다.")
@@ -67,7 +69,8 @@ struct WidgetEditView: View {
         }
         
         
-    }  
+    }
+
     
 }
 
