@@ -9,40 +9,47 @@ struct WidgetEditView: View {
     @State private var showingAddSheet = false
  
     var body: some View {
-        VStack{
-            HStack {
-                Button{
-                    showingAddSheet = true
-                } label: {
-                    Text("+")
-                        .widgetButtonStyle(padding: 25)
+        ScrollViewReader { value in
+            VStack{
+                HStack {
+                    Button{
+                        showingAddSheet = true
+                    } label: {
+                        Text("+")
+                            .widgetButtonStyle(padding: 25)
+                    }
+                    
+                    Spacer()
+                    
+                    Button{
+                        vm.complete()
+                        isEditMode = false
+                    } label: {
+                        Text("완료")
+                            .widgetButtonStyle(padding: 20)
+                    }
+                    
                 }
+                .padding(.horizontal)
                 
-                Spacer()
-                
-                Button{
-                    complete()
-                    isEditMode = false
-                } label: {
-                    Text("완료")
-                        .widgetButtonStyle(padding: 20)
+                ForEach(0..<vm.showingWidgets.count, id: \.self){ index in
+                    if (vm.showingWidgets[index] != nil) {
+                        WidgetView(vm: vm, index: index)
+                            .padding()
+                            .transition(.scale)
+                    }
                 }
                 
             }
-            .padding(.horizontal)
-            
-            ForEach(0..<vm.showingWidgets.count, id: \.self){ index in
-                if (vm.showingWidgets[index] != nil) {
-                    WidgetView(vm: vm, index: index)
-                        .padding()
-                        .transition(.scale)
-                }
+            .coordinateSpace(name: "editView")
+            .onAppear {
+                vm.scrollViewProxy = value
+                
             }
-            
         }
         .alert("위젯을 제거하시겠습니까?", isPresented: $vm.showingRemoveAlert) {
             Button("취소", role: .cancel){}
-            Button("삭제", role: .destructive){withAnimation{remove()}}
+            Button("삭제", role: .destructive){withAnimation{vm.remove()}}
         } message: {
             Text("이 위젯을 제거해도 데이터가 삭제되지 않습니다.")
         }
@@ -59,29 +66,8 @@ struct WidgetEditView: View {
             }
         }
         
-    }
-    func remove() {
-        guard let widget = vm.showingWidgets[vm.index] else { return }
-        vm.hiddenWidgets.append(widget)
-        vm.showingWidgets[vm.index] = nil
-    }
-    
-    func complete() {
-        var showingTuples: [(String, Bool)] = []
-        var hiddenTuples: [(String, Bool)] = []
-        for sw in vm.showingWidgets {
-            if let sw = sw {
-                showingTuples.append((sw.id,  true))
-            }
-        }
-        for hw in vm.hiddenWidgets {
-            hiddenTuples.append((hw.id, false))
-        }
         
-        changeCompletion(showingTuples + hiddenTuples)
-        
-    }
-    
+    }  
     
 }
 

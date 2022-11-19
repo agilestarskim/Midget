@@ -47,7 +47,7 @@ struct WidgetView: View {
     @GestureState var dragState = DragState.inactive
     @State private var scrollState: ScrollState = .normal
     @State private var indexForScroll = 0
-
+    
     var editFrame: CGRect {
         return geoProxy?.frame(in: .named("editView")) ?? CGRect()
     }
@@ -79,14 +79,13 @@ struct WidgetView: View {
                     scrollState = .normal
                 }
                 //TODO: Check switch
-                vm.selectedMovingFrame = editFrame
-                vm.detectCollision(id: self.id)
+                vm.detectCollision(id: self.id, movingFrame: editFrame)
                 
             }
         
         let longPressDrag = LongPressGesture().onEnded { _ in
                 withAnimation{
-                    vm.selectedFixedFrame = editFrame
+                    vm.setSelectedFixedFrame(frame: editFrame)
                     indexForScroll = index
                 }
             }
@@ -132,8 +131,7 @@ struct WidgetView: View {
                     })
                     .offset(dragState.translation)
                     .animation(.linear(duration: 0.1), value: dragState.translation)
-                    .frame(height: vm.collidedWidget == nil ? vm.selectedFixedFrame.height : 0)
-                    
+                    .frame(height: vm.movingDirection == .none ? vm.selectedFixedFrame.height : 0)
             }
             else{
                 VStack {
@@ -169,7 +167,7 @@ struct WidgetView: View {
         }
         .zIndex(dragState.isActive ? 1 : 0)
         .scaleEffect(dragState.isActive ? 1.05 : 1.0)
-        .animation(.linear(duration: 0.1), value: dragState.isActive)
+        .animation(.linear(duration: 0.2), value: dragState.isActive)
         .onTapGesture { }
         .gesture(longPressDrag)
         .onPreferenceChange(GeometryPreferenceKey.self) { value in
@@ -183,6 +181,7 @@ struct WidgetView: View {
                 scrollToDown()
             }
         }
+        
         
         
     }
