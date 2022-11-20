@@ -1,6 +1,5 @@
 import SwiftUI
 
-
 struct WidgetEditView: View {
     @ObservedObject var vm: WidgetController.ViewModel
     @Binding var isEditMode: Bool
@@ -61,11 +60,7 @@ struct WidgetEditView: View {
                 }
             }
         }
-        
-        
     }
-
-    
 }
 
 //version branch

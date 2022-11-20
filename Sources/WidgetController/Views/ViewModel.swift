@@ -1,27 +1,32 @@
 import SwiftUI
 
 extension WidgetController {
+    
+    /// Class that can be accessed from each widgets.
     class ViewModel: ObservableObject {
-        
+        /// user dragging direction. it defines where empty view comes.
         enum MovingDirection {
             case none
             case upward
             case downward
         }
-        
+        /// It defines coordinate space.
         enum Coordinator {
             case globalView
             case editView
         }
-        
+        /// User can see and edit these widgets.
         @Published var showingWidgets: [Widget] = []
+        /// User can't see these widgets. The user can pull these out of the add sheet view.
         @Published var hiddenWidgets: [Widget] = []
+        /// It called when user push edit done button.
         var changeCompletion: ([(String, Bool)]) -> Void = { _ in }
-        
+        /// Information of widgets's geometry proxy.
         var showingWidgetsGeo: [String : GeometryProxy] = [:]
+        
         @Published var collidedWidget: Widget? = nil
         @Published var movingDirection: MovingDirection = .none
-        
+        /// Dragging widget's frame of geometry proxy.
         var selectedFixedFrame: CGRect = CGRect()
         
         let feedback = UIImpactFeedbackGenerator(style: .medium)
@@ -37,6 +42,7 @@ extension WidgetController {
             return self._collidedIndex
         }
         
+        /// It checks if widgets are crushed or not
         func detectCollision(id: String, draggingFrame: CGRect) {
             
             for widget in showingWidgets {
@@ -83,6 +89,7 @@ extension WidgetController {
             self.selectedFixedFrame = frame
         }
         
+        /// Function that remove widget and append it in hidden view.
         func remove() {
             guard _indexForRemove != -1 else { return }
             let widget = showingWidgets[_indexForRemove]
@@ -90,6 +97,7 @@ extension WidgetController {
             showingWidgets.remove(at: _indexForRemove)
         }
         
+        /// Combine showingWidgets and HiddenWidget and call changeCompletion closure.
         func complete() {
             var showingTuples: [(String, Bool)] = []
             var hiddenTuples: [(String, Bool)] = []
@@ -99,11 +107,10 @@ extension WidgetController {
             for hw in hiddenWidgets {
                 hiddenTuples.append((hw.id, false))
             }
-            
             changeCompletion(showingTuples + hiddenTuples)
             
         }
-        
+        /// Swap dragging widget and collided widget
         func swapWidget() {
             if movingDirection == .upward {
                 showingWidgets.move(fromOffsets: [_draggingIndex], toOffset: collidedIndex)
@@ -112,7 +119,7 @@ extension WidgetController {
             }
         }
         
-
+        /// initialize viewmodel state 
         func initialize() {
             collidedWidget = nil
             setCollidedIndex(index: -1)
