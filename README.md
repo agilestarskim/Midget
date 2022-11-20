@@ -9,9 +9,11 @@ you can add, delete and move your own views
    <tr>
       <td width=50%>
 ![combine1](https://user-images.githubusercontent.com/79740398/202901197-67f903be-8d24-4102-86b5-350a7e7a6fa9.gif)
+
       </td>
       <td width=50%>
 ![combine2](https://user-images.githubusercontent.com/79740398/202901210-ea8e8881-97ff-408d-8e9b-e2222731f4d4.gif)
+
       </td>
    </tr>
 </table>
