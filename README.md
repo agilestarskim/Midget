@@ -7,10 +7,10 @@ you can add, delete and move your own views
 
 
 <p align="center">
-<img src="https://user-images.githubusercontent.com/79740398/202902073-6ad6cc83-13b1-4e84-a5c4-fe4fc8615e28.gif" width="180"/>
-<img src="https://user-images.githubusercontent.com/79740398/202901369-ec764376-ce0e-47a7-93a9-25043abfc4a3.gif" width="180"/>
-<img src="https://user-images.githubusercontent.com/79740398/202902199-c9082e5b-23fd-48ea-b9a1-2447e9adce0b.gif" width="180"/>
-<img src="https://user-images.githubusercontent.com/79740398/202902134-da105f7a-b15b-4ec2-a280-aeb4f77a7954.gif" width="180"/>
+<img src="https://user-images.githubusercontent.com/79740398/202902073-6ad6cc83-13b1-4e84-a5c4-fe4fc8615e28.gif" width="180" heigh="400"/>
+<img src="https://user-images.githubusercontent.com/79740398/202901369-ec764376-ce0e-47a7-93a9-25043abfc4a3.gif" width="180" heigh="400"/>
+<img src="https://user-images.githubusercontent.com/79740398/202902199-c9082e5b-23fd-48ea-b9a1-2447e9adce0b.gif" width="180" heigh="400"/>
+<img src="https://user-images.githubusercontent.com/79740398/202902134-da105f7a-b15b-4ec2-a280-aeb4f77a7954.gif" width="180" heigh="400"/>
 </p>
 
 
