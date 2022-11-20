@@ -4,13 +4,13 @@ import SwiftUI
  View that can use iOS widget system
  
     - Parameter:
-        - data: Array of tuples that consisting of an ID of the view and an bool value indicating whether the view is displayed or not.
+        - widgetState: Array of tuples that consisting of an ID of the view and an bool value indicating whether the view is displayed or not.
         - widgets: Array of Widgets consisting real view and ID of the view.
         - widgetDescription: Texts in widgetController for custom or localization.
         - changeCompletion: when edit done it's called. it has widget state data 
  */
 public struct WidgetController: View {
-    let data: [(String, Bool)]
+    let widgetState: [(String, Bool)]
     let widgets: [Widget]
     let widgetDescription: WidgetDescription
     let changeCompletion: ([(String, Bool)]) -> Void
@@ -18,20 +18,20 @@ public struct WidgetController: View {
     @State private var isEditMode = false
     
     public init(
-        data: [(String, Bool)],
+        widgetState: [(String, Bool)],
         widgets: [Widget],
-        widgetDescription: WidgetDescription,
+        widgetDescription: WidgetDescription = WidgetDescription(),
         changeCompletion: @escaping ([(String, Bool)]) -> Void
     ){
         
-        self.data = data
+        self.widgetState = widgetState
         self.widgets = widgets
         self.widgetDescription = widgetDescription
         self.changeCompletion = changeCompletion
         
         var tempShowingWidgets: [Widget] = []
         var tempHiddenWidgets: [Widget] = []
-        for view in data {
+        for view in widgetState {
             for widget in widgets {
                 if view.0 == widget.id {
                     if view.1 {

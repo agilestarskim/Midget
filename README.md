@@ -1,11 +1,20 @@
 # WidgetController
 
 iOS Widget control system in swiftUI
-you can add, delete and change order your own views
+you can add, delete and move your own views
 
 # Screenshots
 
-on taking..
+<table width=100%>
+   <tr>
+      <td width=50%>
+![combine1](https://user-images.githubusercontent.com/79740398/202901197-67f903be-8d24-4102-86b5-350a7e7a6fa9.gif)
+      </td>
+      <td width=50%>
+![combine2](https://user-images.githubusercontent.com/79740398/202901210-ea8e8881-97ff-408d-8e9b-e2222731f4d4.gif)
+      </td>
+   </tr>
+</table>
 
 # Installing
 
@@ -25,6 +34,8 @@ import WidgetController
 
 ## 2. Set widget state list 
 
+widgetState : Array of tuples that consisting of an ID of the view and an bool value indicating whether the view is displayed or not. 
+
 ```swift
 @State private var widgetStateList: [(String, Bool)] = 
 [
@@ -39,7 +50,7 @@ Array's element order is widget's order.
 
 Tuple's first element is ID of views.
 
-You can name it whatever you want.
+You can name it whatever you want. But duplicate is prohibited.
 
 Tuple's second element is bool variable that define whether view is shown or not.
 
@@ -64,8 +75,8 @@ let viewE: some View  = RoundedRectangle(cornerRadius: 15).fill(.indigo).frame(h
 ```swift
     var body: some View {
         WidgetController(
-            data: [],
-            widgets: []
+            widgetState: [],
+            widgets: [],
         ){ _ in
             
         }
@@ -76,7 +87,7 @@ let viewE: some View  = RoundedRectangle(cornerRadius: 15).fill(.indigo).frame(h
 
 ```swift
 WidgetController(
-    data: widgetStateList,
+    widgetState: widgetStateList,
     widgets: [
         Widget(view: AnyView(viewA), id: "viewA"),
         Widget(view: AnyView(viewB), id: "viewB"),
@@ -92,11 +103,12 @@ WidgetController(
 ```swift
 Widget(view: AnyView(yourView), id: "yourViewKey")
 ```
-Your view has to be covered by Widget with id. 
+ 
+Widgets is array of Widget consisting of your view covered by AnyView and id.
 
-Because widgetStateList tracks and finds your view by id.
+id is important. Because widgetState tracks and finds your view by id.
 
-So don't forget to match Widget's id and Tuple's first string.
+So don't forget to match Widget's id and widgetState's id
 
 ```swift
 var widgetStateList = [("viewA", true), ("viewB", false), ("viewC", true)]
@@ -125,7 +137,7 @@ widgets: [
 ]
 ```
 
-## 6. Store permanently Widget's State
+## 6. Store Widget's State permanently
 
 When app close and delete everything, Widgetcontroller is useless as product. 
 
@@ -136,7 +148,7 @@ It returns chaged widget state list when user complete editing.
 
 ```swift
 WidgetController(
-    data: [],
+    widgetState: [],
     widgets: []
 ){ changedWidgetState in
     //rerender view
@@ -212,7 +224,7 @@ struct ContentView: View {
     
     var body: some View {
         WidgetController(
-            data: widgetStateList,
+            widgetState: widgetStateList,
             widgets: [
                 Widget(view: AnyView(viewA.glassBackground(padding: 10)), id: "viewA"),
                 Widget(view: AnyView(viewB.glassBackground(padding: 10)), id: "viewB"),
@@ -239,9 +251,3 @@ struct ContentView_Previews: PreviewProvider {
 ```
 
 </details>
-
-# Todo
-
-* switching view order
-* flexible layout
-* mutiple language support

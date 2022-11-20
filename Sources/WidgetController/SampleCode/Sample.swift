@@ -28,7 +28,7 @@ struct SampleView: View {
     
     var body: some View {
         WidgetController(
-            data: widgetStateList,
+            widgetState: widgetStateList,
             widgets: [
                 Widget(view: AnyView(viewA.glassBackground(padding: 10)), id: "viewA"),
                 Widget(view: AnyView(viewB.glassBackground(padding: 10)), id: "viewB"),
