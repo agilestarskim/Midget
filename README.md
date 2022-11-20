@@ -7,14 +7,18 @@ you can add, delete and move your own views
 
 <table width=100%>
    <tr>
-      <td width=50%>
-![combine1](https://user-images.githubusercontent.com/79740398/202901197-67f903be-8d24-4102-86b5-350a7e7a6fa9.gif)
-
-      </td>
-      <td width=50%>
-![combine2](https://user-images.githubusercontent.com/79740398/202901210-ea8e8881-97ff-408d-8e9b-e2222731f4d4.gif)
-
-      </td>
+        <td width=25%>
+        ![start](https://user-images.githubusercontent.com/79740398/202901360-a0f81c92-7374-4631-add5-45e1045c08c5.gif)
+        </td>
+        <td width=25%>
+        ![add](https://user-images.githubusercontent.com/79740398/202901369-ec764376-ce0e-47a7-93a9-25043abfc4a3.gif)
+        </td>
+        <td width=25%>
+        ![move](https://user-images.githubusercontent.com/79740398/202901374-2135d38e-1b99-4c58-adf6-adc0c3859b7b.gif)
+        </td>
+        <td width=25%>
+        ![combine2](https://user-images.githubusercontent.com/79740398/202901210-ea8e8881-97ff-408d-8e9b-e2222731f4d4.gif)
+        </td>
    </tr>
 </table>
 
