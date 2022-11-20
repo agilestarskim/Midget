@@ -3,11 +3,10 @@ import SwiftUI
 
 struct WidgetEditView: View {
     @ObservedObject var vm: WidgetController.ViewModel
-    let changeCompletion: ([(String, Bool)]) -> Void
-    
     @Binding var isEditMode: Bool
     @State private var showingAddSheet = false
- 
+    let widgetDescription: WidgetDescription
+    
     var body: some View {
         ScrollViewReader { value in
             VStack{
@@ -25,35 +24,30 @@ struct WidgetEditView: View {
                         vm.complete()
                         isEditMode = false
                     } label: {
-                        Text("완료")
+                        Text(widgetDescription.done)
                             .widgetButtonStyle(padding: 20)
                     }
                     
                 }
                 .padding(.horizontal)
                 
-                ForEach(0..<vm.showingWidgets.count, id: \.self){ index in
-                    if (vm.showingWidgets[index] != nil) {
-                        WidgetView(vm: vm, index: index)
-                            .padding()
-                            .transition(.scale)
-                    }
+                ForEach(vm.showingWidgets){ widget in
+                    WidgetView(vm: vm, widget: widget)
+                        .padding()
+                        .transition(.scale)
                 }
-                   
-                
-                
             }
-            .coordinateSpace(name: "editView")
+            .coordinateSpace(name: WidgetController.ViewModel.Coordinator.editView)
             .onAppear {
                 vm.scrollViewProxy = value
                 
             }
         }
-        .alert("위젯을 제거하시겠습니까?", isPresented: $vm.showingRemoveAlert) {
-            Button("취소", role: .cancel){ vm.setIndexForRemove(index: -1)}
-            Button("삭제", role: .destructive){withAnimation{vm.remove()}}
+        .alert(widgetDescription.alertTitle, isPresented: $vm.showingRemoveAlert) {
+            Button(widgetDescription.alertCancel, role: .cancel){ vm.setIndexForRemove(index: -1)}
+            Button(widgetDescription.alertRemove, role: .destructive){withAnimation{vm.remove()}}
         } message: {
-            Text("이 위젯을 제거해도 데이터가 삭제되지 않습니다.")
+            Text(widgetDescription.alertMessage)
         }
         .modify{
             if #available(iOS 16.0, * ){

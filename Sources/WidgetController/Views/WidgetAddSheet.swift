@@ -12,11 +12,7 @@ struct WidgetSheetView: View {
                 .padding()
                 .onTapGesture {
                     withAnimation{
-                        if let foundIndex = vm.showingWidgets.firstIndex(where: {$0 == nil}) {
-                            vm.showingWidgets[foundIndex] = vm.hiddenWidgets[index]
-                        }else {
-                            vm.showingWidgets.append(vm.hiddenWidgets[index])
-                        }
+                        vm.showingWidgets.append(vm.hiddenWidgets[index])
                         vm.hiddenWidgets.remove(at: index)
                         dismiss()
                     }

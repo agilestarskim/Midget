@@ -17,5 +17,3 @@ extension Array where Element == String {
         })
     }
 }
-
-//TODO: Error handler 

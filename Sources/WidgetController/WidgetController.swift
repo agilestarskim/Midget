@@ -4,17 +4,21 @@ public struct WidgetController: View {
     let data: [(String, Bool)]
     let widgets: [Widget]
     let changeCompletion: ([(String, Bool)]) -> Void
+    let widgetDescription: WidgetDescription
     @ObservedObject var vm = ViewModel()
     @State private var isEditMode = false
     
     public init(
         data: [(String, Bool)],
         widgets: [Widget],
+        widgetDescription: WidgetDescription,
         changeCompletion: @escaping ([(String, Bool)]) -> Void
+        
     ){
         
         self.data = data
         self.widgets = widgets
+        self.widgetDescription = widgetDescription
         self.changeCompletion = changeCompletion
         
         var tempShowingWidgets: [Widget] = []
@@ -41,13 +45,13 @@ public struct WidgetController: View {
         GeometryReader { globalGeo in
             ScrollView(showsIndicators: false) {
                     if !isEditMode{
-                        WidgetMainView(vm: vm, isEditMode: $isEditMode)
+                        WidgetMainView(vm: vm, isEditMode: $isEditMode, widgetDescription: widgetDescription)
                     } else {
-                        WidgetEditView(vm: vm, changeCompletion: changeCompletion, isEditMode: $isEditMode)
+                        WidgetEditView(vm: vm, isEditMode: $isEditMode, widgetDescription: widgetDescription)
                             .onAppear{ vm.globalScreenSize = globalGeo.size}
                     }
             }
-            .coordinateSpace(name: "globalView")
+            .coordinateSpace(name: ViewModel.Coordinator.globalView)
         }
         
     }

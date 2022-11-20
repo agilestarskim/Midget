@@ -4,12 +4,17 @@ extension WidgetController {
     class ViewModel: ObservableObject {
         
         enum MovingDirection {
-            case none // not create any space
-            case upward // create space on the view
-            case downward // create space under the view
+            case none
+            case upward
+            case downward
         }
         
-        @Published var showingWidgets: [Widget?] = []
+        enum Coordinator {
+            case globalView
+            case editView
+        }
+        
+        @Published var showingWidgets: [Widget] = []
         @Published var hiddenWidgets: [Widget] = []
         var changeCompletion: ([(String, Bool)]) -> Void = { _ in }
         
@@ -24,32 +29,36 @@ extension WidgetController {
         var globalScreenSize: CGSize = .zero
         @Published var showingRemoveAlert = false
         
-        private var indexForRemove: Int = -1
-        private var draggingIndex: Int = -1
-        private var collidedIndex: Int = -1
+        private var _indexForRemove: Int = -1
+        private var _draggingIndex: Int = -1
+        private var _collidedIndex: Int = -1
         
-        func detectCollision(id: String, movingFrame: CGRect) {
-
+        var collidedIndex: Int {
+            return self._collidedIndex
+        }
+        
+        func detectCollision(id: String, draggingFrame: CGRect) {
+            
             for widget in showingWidgets {
-                guard let widget = widget else { continue }
                 if widget.id == id { continue }
                 
-                guard let collidedFrame = showingWidgetsGeo[widget.id]?.frame(in: .named("editView")) else { return }
+                guard let collidedFrame = showingWidgetsGeo[widget.id]?.frame(in: .named(Coordinator.editView)) else { return }
                 
-                guard CGRectIntersectsRect(movingFrame, collidedFrame) else { continue }
+                guard CGRectIntersectsRect(draggingFrame, collidedFrame) else { continue }
                 
-                if movingFrame.contains(CGPoint(x: collidedFrame.midX, y: collidedFrame.midY)) {
+                if draggingFrame.contains(CGPoint(x: collidedFrame.midX, y: collidedFrame.midY)) {
                     
+                    setDraggingIndex(index: showingWidgets.firstIndex(where: {$0.id == id}))
+                    setCollidedIndex(index: showingWidgets.firstIndex(of: widget))
                     withAnimation {
                         collidedWidget = widget
-                        if movingFrame.midY > collidedFrame.midY {
+                        if draggingFrame.midY > collidedFrame.midY {
                             movingDirection = .downward
                         }else {
                             movingDirection = .upward
                         }
                     }
-                    setDraggingIndex(index: showingWidgets.firstIndex(where: {$0?.id == id}))
-                    setCollidedIndex(index: showingWidgets.firstIndex(of: widget))
+                    
                     return
                 }
             }
@@ -57,17 +66,17 @@ extension WidgetController {
         }
         
         func setIndexForRemove(index: Int) {
-            self.indexForRemove = index
+            self._indexForRemove = index
         }
         
         func setDraggingIndex(index: Int?){
             guard let index = index else { return }
-            self.draggingIndex = index
+            self._draggingIndex = index
         }
         
         func setCollidedIndex(index: Int?){
             guard let index = index else { return }
-            self.collidedIndex = index
+            self._collidedIndex = index
         }
         
         func setSelectedFixedFrame(frame: CGRect) {
@@ -75,19 +84,17 @@ extension WidgetController {
         }
         
         func remove() {
-            guard indexForRemove != -1 else { return }
-            guard let widget = showingWidgets[indexForRemove] else { return }
+            guard _indexForRemove != -1 else { return }
+            let widget = showingWidgets[_indexForRemove]
             hiddenWidgets.append(widget)
-            showingWidgets[indexForRemove] = nil
+            showingWidgets.remove(at: _indexForRemove)
         }
         
         func complete() {
             var showingTuples: [(String, Bool)] = []
             var hiddenTuples: [(String, Bool)] = []
             for sw in showingWidgets {
-                if let sw = sw {
-                    showingTuples.append((sw.id,  true))
-                }
+                showingTuples.append((sw.id,  true))
             }
             for hw in hiddenWidgets {
                 hiddenTuples.append((hw.id, false))
@@ -98,40 +105,16 @@ extension WidgetController {
         }
         
         func swapWidget() {
-            guard draggingIndex != -1 || collidedIndex != -1 else { return }
-            guard collidedWidget != nil else { return }
-            let dragWidget = showingWidgets[draggingIndex]
-            if draggingIndex > collidedIndex {
-                if movingDirection == .upward {
-                    showingWidgets.insert(dragWidget, at: collidedIndex)
-                    showingWidgets.remove(at: draggingIndex + 1)
-                    return
-                }else if movingDirection == .downward {
-                    showingWidgets.insert(dragWidget, at: collidedIndex + 1)
-                    showingWidgets.remove(at: draggingIndex + 1)
-                    return
-                }
-            } else {
-                if movingDirection == .upward {
-                    showingWidgets.insert(dragWidget, at: collidedIndex)
-                    showingWidgets.remove(at: draggingIndex)
-                    return
-                }else if movingDirection == .downward {
-                    if collidedIndex == showingWidgets.endIndex {
-                        showingWidgets.append(dragWidget)
-                    }else {
-                        showingWidgets.insert(dragWidget, at: collidedIndex + 1)
-                    }
-                    showingWidgets.remove(at: draggingIndex)
-                    return
-                }
+            if movingDirection == .upward {
+                showingWidgets.move(fromOffsets: [_draggingIndex], toOffset: collidedIndex)
+            } else if movingDirection == .downward {
+                showingWidgets.move(fromOffsets: [_draggingIndex], toOffset: collidedIndex + 1)
             }
-            //showingWidgets.swapAt(draggingIndex, collidedIndex)
         }
         
+
         func initialize() {
             collidedWidget = nil
-            movingDirection = .none
             setCollidedIndex(index: -1)
             setDraggingIndex(index: -1)
             setIndexForRemove(index: -1)

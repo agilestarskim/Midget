@@ -35,7 +35,8 @@ struct SampleView: View {
                 Widget(view: AnyView(viewC), id: "viewC"),
                 Widget(view: AnyView(viewD), id: "viewD"),
                 Widget(view: AnyView(viewE.glassBackground(padding: 10)), id: "viewE")
-            ]
+            ],
+            widgetDescription: WidgetDescription()
         ){ chagedWidgetStateList in
             //rerender view
             widgetStateList = chagedWidgetStateList
