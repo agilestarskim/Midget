@@ -5,15 +5,28 @@ you can add, delete and move your own views
 
 # Screenshots
 
-<figure class="half">
-    <img src="https://user-images.githubusercontent.com/79740398/202901369-ec764376-ce0e-47a7-93a9-25043abfc4a3.gif">
-    <img src="https://user-images.githubusercontent.com/79740398/202901369-ec764376-ce0e-47a7-93a9-25043abfc4a3.gif">
-figure>
 
-<figure class="half">
-    <img src="https://user-images.githubusercontent.com/79740398/202901374-2135d38e-1b99-4c58-adf6-adc0c3859b7b.gif">
-    <img src="https://user-images.githubusercontent.com/79740398/202901210-ea8e8881-97ff-408d-8e9b-e2222731f4d4.gif">
-figure>
+<table width=100%>
+   <tr>
+      <td width=25%>
+<img src="https://user-images.githubusercontent.com/79740398/202902073-6ad6cc83-13b1-4e84-a5c4-fe4fc8615e28.gif" alt="start" style="display:inline-block; width:48%">
+Edit
+      </td>
+<td width=25%>
+<img src="https://user-images.githubusercontent.com/79740398/202901369-ec764376-ce0e-47a7-93a9-25043abfc4a3.gif" alt="add" style="display:inline-block; width:48%">
+Add
+      </td>
+<td width=25%>
+<img src="https://user-images.githubusercontent.com/79740398/202902199-c9082e5b-23fd-48ea-b9a1-2447e9adce0b.gif" alt="remove" style="display:inline-block; width:48%">
+Remove
+      </td>
+<td width=25%>
+<img src="https://user-images.githubusercontent.com/79740398/202902134-da105f7a-b15b-4ec2-a280-aeb4f77a7954.gif" alt="move" style="display:inline-block; width:48%">
+Move
+      </td>
+      
+   </tr>
+</table>
 
 
 
