@@ -122,6 +122,7 @@ extension WidgetController {
         /// initialize viewmodel state 
         func initialize() {
             collidedWidget = nil
+            movingDirection = .none
             setCollidedIndex(index: -1)
             setDraggingIndex(index: -1)
             setIndexForRemove(index: -1)
