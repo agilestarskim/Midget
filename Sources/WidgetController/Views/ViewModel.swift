@@ -19,8 +19,6 @@ extension WidgetController {
         @Published var showingWidgets: [Widget] = []
         /// User can't see these widgets. The user can pull these out of the add sheet view.
         @Published var hiddenWidgets: [Widget] = []
-        /// It called when user push edit done button.
-        var changeCompletion: ([(String, Bool)]) -> Void = { _ in }
         /// Information of widgets's geometry proxy.
         var showingWidgetsGeo: [String : GeometryProxy] = [:]
         
@@ -46,15 +44,15 @@ extension WidgetController {
         func detectCollision(id: String, draggingFrame: CGRect) {
             
             for widget in showingWidgets {
-                if widget.id == id { continue }
+                if widget.identifier == id { continue }
                 
-                guard let collidedFrame = showingWidgetsGeo[widget.id]?.frame(in: .named(Coordinator.editView)) else { return }
+                guard let collidedFrame = showingWidgetsGeo[widget.identifier]?.frame(in: .named(Coordinator.editView)) else { return }
                 
                 guard CGRectIntersectsRect(draggingFrame, collidedFrame) else { continue }
                 
                 if draggingFrame.contains(CGPoint(x: collidedFrame.midX, y: collidedFrame.midY)) {
                     
-                    setDraggingIndex(index: showingWidgets.firstIndex(where: {$0.id == id}))
+                    setDraggingIndex(index: showingWidgets.firstIndex(where: {$0.identifier == id}))
                     setCollidedIndex(index: showingWidgets.firstIndex(of: widget))
                     withAnimation {
                         collidedWidget = widget
@@ -68,7 +66,6 @@ extension WidgetController {
                     return
                 }
             }
-            
         }
         
         func setIndexForRemove(index: Int) {
@@ -98,18 +95,7 @@ extension WidgetController {
         }
         
         /// Combine showingWidgets and HiddenWidget and call changeCompletion closure.
-        func complete() {
-            var showingTuples: [(String, Bool)] = []
-            var hiddenTuples: [(String, Bool)] = []
-            for sw in showingWidgets {
-                showingTuples.append((sw.id,  true))
-            }
-            for hw in hiddenWidgets {
-                hiddenTuples.append((hw.id, false))
-            }
-            changeCompletion(showingTuples + hiddenTuples)
-            
-        }
+        
         /// Swap dragging widget and collided widget
         func swapWidget() {
             if movingDirection == .upward {
@@ -127,7 +113,5 @@ extension WidgetController {
             setDraggingIndex(index: -1)
             setIndexForRemove(index: -1)
         }
-        
-        
     }
 }

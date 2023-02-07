@@ -10,59 +10,154 @@ import SwiftUI
         - changeCompletion: when edit done it's called. it has widget state data 
  */
 public struct WidgetController: View {
-    let widgetState: [(String, Bool)]
-    let widgets: [Widget]
+    
+    @Binding var widgetState: WidgetState
     let widgetDescription: WidgetDescription
-    let changeCompletion: ([(String, Bool)]) -> Void
+    let widgets: [Widget]
     @ObservedObject var vm = ViewModel()
     @State private var isEditMode = false
     
-    public init(
-        widgetState: [(String, Bool)],
-        widgets: [Widget],
+    
+    public init (
+        widgetState: Binding<WidgetState>,
         widgetDescription: WidgetDescription = WidgetDescription(),
-        changeCompletion: @escaping ([(String, Bool)]) -> Void
+        @ViewBuilder content: @escaping () -> Widget
     ){
-        
-        self.widgetState = widgetState
-        self.widgets = widgets
+        self._widgetState = widgetState
         self.widgetDescription = widgetDescription
-        self.changeCompletion = changeCompletion
-        
-        var tempShowingWidgets: [Widget] = []
-        var tempHiddenWidgets: [Widget] = []
-        for view in widgetState {
-            for widget in widgets {
-                if view.0 == widget.id {
-                    if view.1 {
-                        tempShowingWidgets.append(widget)
-                    }else {
-                        tempHiddenWidgets.append(widget)
-                    }
-                    break
+        let cv = content()
+        self.widgets = [cv]
+    }
+    
+    public init (
+        widgetState: Binding<WidgetState>,
+        widgetDescription: WidgetDescription = WidgetDescription(),
+        @ViewBuilder content: @escaping () -> TupleView<(Widget, Widget)>
+    ) {
+        self._widgetState = widgetState
+        self.widgetDescription = widgetDescription
+        let cv = content().value
+        self.widgets = [cv.0, cv.1]
+        devideShowingWidgetAndHiddenWidget()
+    }
+
+    public init (
+        widgetState: Binding<WidgetState>,
+        widgetDescription: WidgetDescription = WidgetDescription(),
+        @ViewBuilder content: @escaping () -> TupleView<(Widget, Widget, Widget)>
+    ) {
+        self._widgetState = widgetState
+        self.widgetDescription = widgetDescription
+        let cv = content().value
+        self.widgets = [cv.0, cv.1, cv.2]
+        devideShowingWidgetAndHiddenWidget()
+    }
+    
+    public init (
+        widgetState: Binding<WidgetState>,
+        widgetDescription: WidgetDescription = WidgetDescription(),
+        @ViewBuilder content: @escaping () -> TupleView<(Widget, Widget, Widget, Widget)>
+    ) {
+        self._widgetState = widgetState
+        self.widgetDescription = widgetDescription
+        let cv = content().value
+        self.widgets = [cv.0, cv.1, cv.2, cv.3]
+        devideShowingWidgetAndHiddenWidget()
+    }
+    
+    public init (
+        widgetState: Binding<WidgetState>,
+        widgetDescription: WidgetDescription = WidgetDescription(),
+        @ViewBuilder content: @escaping () -> TupleView<(Widget, Widget, Widget, Widget, Widget)>
+    ) {
+        self._widgetState = widgetState
+        self.widgetDescription = widgetDescription
+        let cv = content().value
+        self.widgets = [cv.0, cv.1, cv.2, cv.3, cv.4]
+        devideShowingWidgetAndHiddenWidget()
+    }
+    
+    public init (
+        widgetState: Binding<WidgetState>,
+        widgetDescription: WidgetDescription = WidgetDescription(),
+        @ViewBuilder content: @escaping () -> TupleView<(Widget, Widget, Widget, Widget, Widget, Widget)>
+    ) {
+        self._widgetState = widgetState
+        self.widgetDescription = widgetDescription
+        let cv = content().value
+        self.widgets = [cv.0, cv.1, cv.2, cv.3, cv.4, cv.5]
+        devideShowingWidgetAndHiddenWidget()
+    }
+    
+    public init (
+        widgetState: Binding<WidgetState>,
+        widgetDescription: WidgetDescription = WidgetDescription(),
+        @ViewBuilder content: @escaping () -> TupleView<(Widget, Widget, Widget, Widget, Widget, Widget, Widget)>
+    ) {
+        self._widgetState = widgetState
+        self.widgetDescription = widgetDescription
+        let cv = content().value
+        self.widgets = [cv.0, cv.1, cv.2, cv.3, cv.4, cv.5, cv.6]
+        devideShowingWidgetAndHiddenWidget()
+    }
+    
+    public init (
+        widgetState: Binding<WidgetState>,
+        widgetDescription: WidgetDescription = WidgetDescription(),
+        @ViewBuilder content: @escaping () -> TupleView<(Widget, Widget, Widget, Widget, Widget, Widget, Widget, Widget)>
+    ) {
+        self._widgetState = widgetState
+        self.widgetDescription = widgetDescription
+        let cv = content().value
+        self.widgets = [cv.0, cv.1, cv.2, cv.3, cv.4, cv.5, cv.6, cv.7]
+        devideShowingWidgetAndHiddenWidget()
+    }
+    
+    public init (
+        widgetState: Binding<WidgetState>,
+        widgetDescription: WidgetDescription = WidgetDescription(),
+        @ViewBuilder content: @escaping () -> TupleView<(Widget, Widget, Widget, Widget, Widget, Widget, Widget, Widget, Widget)>
+    ) {
+        self._widgetState = widgetState
+        self.widgetDescription = widgetDescription
+        let cv = content().value
+        self.widgets = [cv.0, cv.1, cv.2, cv.3, cv.4, cv.5, cv.6, cv.7, cv.8]
+        devideShowingWidgetAndHiddenWidget()
+    }
+    
+    
+    
+    private func devideShowingWidgetAndHiddenWidget() {
+        for state in self.widgetState.stateList {
+            for widget in self.widgets {
+                if state.1 && state.0 == widget.identifier {
+                    vm.showingWidgets.append(widget)
+                } else if !state.1 && state.0 == widget.identifier {
+                    vm.hiddenWidgets.append(widget)
                 }
             }
         }
-        
-        vm.showingWidgets = tempShowingWidgets
-        vm.hiddenWidgets = tempHiddenWidgets
-        vm.changeCompletion = changeCompletion
     }
+    
     
     public var body: some View {
         GeometryReader { globalGeo in
             ScrollView(showsIndicators: false) {
                     if !isEditMode{
-                        WidgetMainView(vm: vm, isEditMode: $isEditMode, widgetDescription: widgetDescription)
+                        WidgetMainView(isEditMode: $isEditMode, widgetDescription: widgetDescription)
                     } else {
-                        WidgetEditView(vm: vm, isEditMode: $isEditMode, widgetDescription: widgetDescription)
+                        WidgetEditView(
+                            isEditMode: $isEditMode,
+                            widgetDescription: widgetDescription
+                        ){ 
+                            changedWidgetState in
+                            self.widgetState.stateList = changedWidgetState
+                        }
                             .onAppear{ vm.globalScreenSize = globalGeo.size}
                     }
             }
             .coordinateSpace(name: ViewModel.Coordinator.globalView)
         }
-        
+        .environmentObject(vm)
     }
 }
-
-

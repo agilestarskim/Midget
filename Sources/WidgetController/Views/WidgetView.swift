@@ -2,7 +2,7 @@ import SwiftUI
 
 struct WidgetView: View {
     
-    @ObservedObject var vm: WidgetController.ViewModel
+    @EnvironmentObject var vm: WidgetController.ViewModel
     let widget: Widget
     // geometry proxy of widget. it allocates when view appeared.
     @State var geoProxy: GeometryProxy? = nil
@@ -18,7 +18,7 @@ struct WidgetView: View {
     }
     
     var id: String {
-        widget.id
+        widget.identifier
     }
     
     var index: Int {
@@ -82,7 +82,7 @@ struct WidgetView: View {
         
         VStack{
             if dragState.isDragging {
-                widget.view
+                widget.content
                     .background(GeometryReader { geo in
                         Color.clear
                             .preference(key: GeometryPreferenceKey.self, value: geo)
@@ -99,13 +99,13 @@ struct WidgetView: View {
                     Color.clear
                         .frame(height: vm.collidedWidget == widget && vm.movingDirection == .upward ?
                                vm.selectedFixedFrame.height : 0 )
-                    widget.view
+                    widget.content
                         .background(GeometryReader { geo in
                             Color.clear
                                 .preference(key: GeometryPreferenceKey.self, value: geo)
                                 // When view appears, set geo dictionary for detecting collid
                                 .onAppear {
-                                    let id = widget.id
+                                    let id = widget.identifier
                                     vm.showingWidgetsGeo.updateValue(geo, forKey: id)
                                 }
                         })
@@ -148,7 +148,7 @@ struct WidgetView: View {
             // check valid index of showingWidgets.
             if scrollState == .up && currentIndex >= vm.showingWidgets.startIndex && currentIndex < vm.showingWidgets.endIndex {
                 // convert index to id
-                let destination = vm.showingWidgets[currentIndex].id
+                let destination = vm.showingWidgets[currentIndex].identifier
                 withAnimation{
                     vm.scrollViewProxy?.scrollTo(destination)
                 }
@@ -165,7 +165,7 @@ struct WidgetView: View {
         Timer.scheduledTimer(withTimeInterval: 0.3, repeats: true, block: { Timer in
             
             if  scrollState == .down && currentIndex >= vm.showingWidgets.startIndex && currentIndex < vm.showingWidgets.endIndex {
-                let destination = vm.showingWidgets[currentIndex].id
+                let destination = vm.showingWidgets[currentIndex].identifier
                 withAnimation{
                     vm.scrollViewProxy?.scrollTo(destination)
                 }

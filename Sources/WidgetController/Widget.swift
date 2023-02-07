@@ -7,26 +7,31 @@ import SwiftUI
         - view: user's custom view covered AnyView
         - id: view's id that can track view. duplicate is prohibited.
  */
-public struct Widget: Equatable, Hashable, Identifiable{
-    /// user's custom view.
-    let view: AnyView
-    /// view's ID 
-    public let id: String
-    	
-    public init(view: AnyView, id: String) {
-        self.view = view
-        self.id = id
+
+public struct Widget: IdentifiableView {
+    
+    public let identifier: String
+    public let content: AnyView
+    
+    public init(identifier: String, @ViewBuilder content: () -> some View){
+        self.identifier = identifier
+        self.content = AnyView(content())
+    }
+    
+    public var body: some View {
+        content
     }
     
     public static func == (lhs: Widget, rhs: Widget) -> Bool {
-        return lhs.id == rhs.id
+        return lhs.identifier == rhs.identifier
     }
     
     public func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
+        hasher.combine(identifier)
     }
-    
-    
-    
 }
 
+public protocol IdentifiableView: View, Equatable {
+    var identifier: String { get }
+    var content: AnyView { get }
+}

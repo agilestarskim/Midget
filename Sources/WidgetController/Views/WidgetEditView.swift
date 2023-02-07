@@ -1,11 +1,11 @@
 import SwiftUI
 
 struct WidgetEditView: View {
-    @ObservedObject var vm: WidgetController.ViewModel
+    @EnvironmentObject var vm: WidgetController.ViewModel
     @Binding var isEditMode: Bool
     @State private var showingAddSheet = false
     let widgetDescription: WidgetDescription
-    
+    let completion: ([(String, Bool)]) -> ()
     var body: some View {
         ScrollViewReader { value in
             VStack{
@@ -20,7 +20,7 @@ struct WidgetEditView: View {
                     Spacer()
                     
                     Button{
-                        vm.complete()
+                        self.complete()
                         isEditMode = false
                     } label: {
                         Text(widgetDescription.done)
@@ -30,16 +30,15 @@ struct WidgetEditView: View {
                 }
                 .padding(.horizontal)
                 
-                ForEach(vm.showingWidgets){ widget in
-                    WidgetView(vm: vm, widget: widget)
+                ForEach(vm.showingWidgets, id: \.identifier){ widget in
+                    WidgetView(widget: widget)
                         .padding()
                         .transition(.scale)
                 }
             }
             .coordinateSpace(name: WidgetController.ViewModel.Coordinator.editView)
             .onAppear {
-                vm.scrollViewProxy = value
-                
+                vm.scrollViewProxy = value                
             }
         }
         .alert(widgetDescription.alertTitle, isPresented: $vm.showingRemoveAlert) {
@@ -51,15 +50,27 @@ struct WidgetEditView: View {
         .modify{
             if #available(iOS 16.0, * ){
                 $0.sheet(isPresented: $showingAddSheet){
-                    WidgetSheetView(vm: vm)
+                    WidgetSheetView()
                         .presentationDetents([.medium])
                 }
             }else {
                 $0.customBottomSheet(isPresented: $showingAddSheet){
-                    WidgetSheetView(vm: vm)
+                    WidgetSheetView()
                 }
             }
         }
+    }
+    
+    func complete() {
+        var showingTuples: [(String, Bool)] = []
+        var hiddenTuples: [(String, Bool)] = []
+        for sw in vm.showingWidgets {
+            showingTuples.append((sw.identifier,  true))
+        }
+        for hw in vm.hiddenWidgets {
+            hiddenTuples.append((hw.identifier, false))
+        }
+        completion(showingTuples + hiddenTuples)
     }
 }
 
