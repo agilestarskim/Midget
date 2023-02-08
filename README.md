@@ -27,6 +27,19 @@ import WidgetController
 ```
 
 ## 2. Set widget state 
+
+```swift
+@State private var widgetState = WidgetState(
+    [   
+        ("viewA", true),
+        ("viewB", true),
+        ("viewC", true),
+        ("viewD", true),
+        ("viewE", true)
+    ]
+)
+```
+
 #### what is a widgetState?
 
 * This is an object for storing and managing the state of widgets
@@ -42,22 +55,8 @@ import WidgetController
 
 * \[optional] saveKey: You can write the key name you want.
 
-```swift
-@State private var widgetStateList = WidgetState(
-    [   
-        ("viewA", true),
-        ("viewB", true),
-        ("viewC", true),
-        ("viewD", true),
-        ("viewE", true)
-    ]
-)
-```
 
 ## 3. Place WidgetController
-
-Place the WidgetController where you want it and pass the just created WidgetState to the constructor factor as the binding value.
-
 
 ```swift
     var body: some View {
@@ -66,6 +65,9 @@ Place the WidgetController where you want it and pass the just created WidgetSta
         }       
     }
 ```  
+
+Place the WidgetController where you want it and pass the just created WidgetState to the constructor factor as the binding value.
+
 
 ## 4. Make Widgets.
 
