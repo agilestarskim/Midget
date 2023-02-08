@@ -40,7 +40,7 @@ import WidgetController
 )
 ```
 
-#### what is a widgetState?
+#### What is a widgetState?
 
 * This is an object for storing and managing the state of widgets
 
@@ -59,11 +59,11 @@ import WidgetController
 ## 3. Place WidgetController
 
 ```swift
-    var body: some View {
-        WidgetController($widgetState) {
-        
-        }       
-    }
+var body: some View {
+    WidgetController($widgetState) {
+    
+    }       
+}
 ```  
 
 Place the WidgetController where you want it and pass the just created WidgetState to the constructor factor as the binding value.
