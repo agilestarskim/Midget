@@ -2,7 +2,7 @@ import SwiftUI
 
 extension WidgetController {
     
-    /// Class that can be accessed from each widgets.
+    /// Class that can be accessed from each views.
     class ViewModel: ObservableObject {
         /// user dragging direction. it defines where empty view comes.
         enum MovingDirection {

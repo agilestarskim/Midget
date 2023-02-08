@@ -7,7 +7,21 @@
 
 import Foundation
 
-
+/// Objects for storing and managing the state of widgets
+///
+/// The widget's identifier and key must match.
+/// Bool value that determines whether to show the widget or not based on the key
+///
+///     @State private var widgetState = WidgetState(
+///         [
+///             ("viewA", true),
+///             ("viewB", true),
+///             ("viewC", true),
+///             ("viewD", true),
+///             ("viewE", true)
+///         ]
+///     )
+///
 public class WidgetState {
     var stateList: [(String, Bool)] {
         didSet {
@@ -16,6 +30,9 @@ public class WidgetState {
     }
     let saveKey: String
     
+    ///  - Parameters:
+    ///     - defaultWidgetState: The tuple array has a key that matches the widget's identifier and a bool value that determines whether to show the widget or not.
+    ///     - saveKey: Key string to store the statelist in userDefault
     public init(_ defaultWidgetState: [(String, Bool)], saveKey: String = "widgetStateSaveKey") {
         self.saveKey = saveKey
         let stringDataFromDB = UserDefaults.standard.array(forKey: saveKey) as? [String] ?? []

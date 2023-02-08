@@ -1,14 +1,24 @@
 import SwiftUI
 
-/**
- View that can use iOS widget system
- 
-    - Parameter:
-        - widgetState: Array of tuples that consisting of an ID of the view and an bool value indicating whether the view is displayed or not.
-        - widgets: Array of Widgets consisting real view and ID of the view.
-        - widgetDescription: Texts in widgetController for custom or localization.
-        - changeCompletion: when edit done it's called. it has widget state data 
- */
+
+/// View container for using widget controllers
+///
+/// Deliver the WidgetState and WidgetDescription to the constructor parameter and put Widget in the tracking closure.
+///
+///     var body: some View {
+///         WidgetController($widgetStateList) {
+///             Widget(identifier: "viewA") {
+///                 RoundedRectangle(cornerRadius: 15).fill(.red).frame(height: 100)
+///             }
+///             Widget(identifier: "viewB") {
+///                    RoundedRectangle(cornerRadius: 15).fill(.orange).frame(height: 100)
+///             }
+///             Widget(identifier: "viewC") {
+///                  RoundedRectangle(cornerRadius: 15).fill(.yellow).frame(height: 100)
+///             }
+///         }
+///     }
+/// 
 public struct WidgetController: View {
     
     @Binding var widgetState: WidgetState
@@ -17,10 +27,14 @@ public struct WidgetController: View {
     @ObservedObject var vm = ViewModel()
     @State private var isEditMode = false
     
-    
+    /// create widget controller that display widgets
+    /// - Parameters:
+    ///     - widgetState: The widget status list received from the user is manipulated in the internal view and then bound to the parent view.
+    ///     - widgetDescription: Objects that can localize or customize text in the UI
+    ///     - content: widget
     public init (
-        widgetState: Binding<WidgetState>,
-        widgetDescription: WidgetDescription = WidgetDescription(),
+        _ widgetState: Binding<WidgetState>,
+        _ widgetDescription:WidgetDescription = WidgetDescription(),
         @ViewBuilder content: @escaping () -> Widget
     ){
         self._widgetState = widgetState
@@ -30,8 +44,8 @@ public struct WidgetController: View {
     }
     
     public init (
-        widgetState: Binding<WidgetState>,
-        widgetDescription: WidgetDescription = WidgetDescription(),
+        _ widgetState: Binding<WidgetState>,
+        _ widgetDescription:WidgetDescription = WidgetDescription(),
         @ViewBuilder content: @escaping () -> TupleView<(Widget, Widget)>
     ) {
         self._widgetState = widgetState
@@ -42,8 +56,8 @@ public struct WidgetController: View {
     }
 
     public init (
-        widgetState: Binding<WidgetState>,
-        widgetDescription: WidgetDescription = WidgetDescription(),
+        _ widgetState: Binding<WidgetState>,
+        _ widgetDescription:WidgetDescription = WidgetDescription(),
         @ViewBuilder content: @escaping () -> TupleView<(Widget, Widget, Widget)>
     ) {
         self._widgetState = widgetState
@@ -54,8 +68,8 @@ public struct WidgetController: View {
     }
     
     public init (
-        widgetState: Binding<WidgetState>,
-        widgetDescription: WidgetDescription = WidgetDescription(),
+        _ widgetState: Binding<WidgetState>,
+        _ widgetDescription:WidgetDescription = WidgetDescription(),
         @ViewBuilder content: @escaping () -> TupleView<(Widget, Widget, Widget, Widget)>
     ) {
         self._widgetState = widgetState
@@ -66,8 +80,8 @@ public struct WidgetController: View {
     }
     
     public init (
-        widgetState: Binding<WidgetState>,
-        widgetDescription: WidgetDescription = WidgetDescription(),
+        _ widgetState: Binding<WidgetState>,
+        _ widgetDescription:WidgetDescription = WidgetDescription(),
         @ViewBuilder content: @escaping () -> TupleView<(Widget, Widget, Widget, Widget, Widget)>
     ) {
         self._widgetState = widgetState
@@ -78,8 +92,8 @@ public struct WidgetController: View {
     }
     
     public init (
-        widgetState: Binding<WidgetState>,
-        widgetDescription: WidgetDescription = WidgetDescription(),
+        _ widgetState: Binding<WidgetState>,
+        _ widgetDescription:WidgetDescription = WidgetDescription(),
         @ViewBuilder content: @escaping () -> TupleView<(Widget, Widget, Widget, Widget, Widget, Widget)>
     ) {
         self._widgetState = widgetState
@@ -90,8 +104,8 @@ public struct WidgetController: View {
     }
     
     public init (
-        widgetState: Binding<WidgetState>,
-        widgetDescription: WidgetDescription = WidgetDescription(),
+        _ widgetState: Binding<WidgetState>,
+        _ widgetDescription:WidgetDescription = WidgetDescription(),
         @ViewBuilder content: @escaping () -> TupleView<(Widget, Widget, Widget, Widget, Widget, Widget, Widget)>
     ) {
         self._widgetState = widgetState
@@ -102,8 +116,8 @@ public struct WidgetController: View {
     }
     
     public init (
-        widgetState: Binding<WidgetState>,
-        widgetDescription: WidgetDescription = WidgetDescription(),
+        _ widgetState: Binding<WidgetState>,
+        _ widgetDescription:WidgetDescription = WidgetDescription(),
         @ViewBuilder content: @escaping () -> TupleView<(Widget, Widget, Widget, Widget, Widget, Widget, Widget, Widget)>
     ) {
         self._widgetState = widgetState
@@ -114,8 +128,8 @@ public struct WidgetController: View {
     }
     
     public init (
-        widgetState: Binding<WidgetState>,
-        widgetDescription: WidgetDescription = WidgetDescription(),
+        _ widgetState: Binding<WidgetState>,
+        _ widgetDescription:WidgetDescription = WidgetDescription(),
         @ViewBuilder content: @escaping () -> TupleView<(Widget, Widget, Widget, Widget, Widget, Widget, Widget, Widget, Widget)>
     ) {
         self._widgetState = widgetState
@@ -125,8 +139,8 @@ public struct WidgetController: View {
         devideShowingWidgetAndHiddenWidget()
     }
     
-    
-    
+    /// Make sure that the key in the widgetStateList matches the ID value of the widget
+    /// and decide whether to show the view based on the value in the widgetStateList.
     private func devideShowingWidgetAndHiddenWidget() {
         for state in self.widgetState.stateList {
             for widget in self.widgets {
@@ -146,14 +160,10 @@ public struct WidgetController: View {
                     if !isEditMode{
                         WidgetMainView(isEditMode: $isEditMode, widgetDescription: widgetDescription)
                     } else {
-                        WidgetEditView(
-                            isEditMode: $isEditMode,
-                            widgetDescription: widgetDescription
-                        ){ 
-                            changedWidgetState in
+                        WidgetEditView(isEditMode: $isEditMode,widgetDescription: widgetDescription){ changedWidgetState in
                             self.widgetState.stateList = changedWidgetState
                         }
-                            .onAppear{ vm.globalScreenSize = globalGeo.size}
+                        .onAppear{ vm.globalScreenSize = globalGeo.size}
                     }
             }
             .coordinateSpace(name: ViewModel.Coordinator.globalView)
