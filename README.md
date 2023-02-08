@@ -26,159 +26,91 @@ https://github.com/agilestarskim/WidgetController.git
 import WidgetController
 ```
 
-## 2. Set widget state list 
+## 2. Set widget state 
+#### what is a widgetState?
 
-widgetState : Array of tuples that consisting of an ID of the view and an bool value indicating whether the view is displayed or not. 
+* This is an object for storing and managing the state of widgets
 
-```swift
-@State private var widgetStateList: [(String, Bool)] = 
-[
-    ("viewA", true), 
-    ("viewB", false), 
-    ("viewC", true), 
-    ("viewD", false), 
-    ("viewE", true)
-]
-```
-Array's element order is widget's order. 
+#### What do I need to make a WidgetState?
 
-Tuple's first element is ID of views.
+* you need **stateList** and **saveKey**
+* stateList is a tuple array that stores the state of the widget 
+* savekey is name to store in the userDefaults (persistent storage).
 
-You can name it whatever you want. But duplicate is prohibited.
+#### How to make
+* widgetState: Array of tuples that consisting of an ID of the view and an bool value indicating whether the view is displayed or not.
 
-Tuple's second element is bool variable that define whether view is shown or not.
-
-If it's true, view will be shown.
-
-If it's false, view won't be shown.
-
-## 3. Define your own view
-
-here is a sample code
+* \[optional] saveKey: You can write the key name you want.
 
 ```swift
-let viewA: some View  = RoundedRectangle(cornerRadius: 15).fill(.red).frame(height: 100)
-let viewB: some View  = RoundedRectangle(cornerRadius: 15).fill(.orange).frame(height: 100)
-let viewC: some View  = RoundedRectangle(cornerRadius: 15).fill(.green).frame(height: 100)
-let viewD: some View  = RoundedRectangle(cornerRadius: 15).fill(.blue).frame(height: 100)
-let viewE: some View  = RoundedRectangle(cornerRadius: 15).fill(.indigo).frame(height: 100)
+@State private var widgetStateList = WidgetState(
+    [   
+        ("viewA", true),
+        ("viewB", true),
+        ("viewC", true),
+        ("viewD", true),
+        ("viewE", true)
+    ]
+)
 ```
 
-## 4. Place WidgetController
+## 3. Place WidgetController
+
+Place the WidgetController where you want it and pass the just created WidgetState to the constructor factor as the binding value.
+
 
 ```swift
     var body: some View {
-        WidgetController(
-            widgetState: [],
-            widgets: [],
-        ){ _ in
-            
-        }
+        WidgetController($widgetState) {
+        
+        }       
     }
 ```  
 
-## 5. Put proper data into the parameter
+## 4. Make Widgets.
+
+#### What is a Widget?
+* A widget is a view that has an ID.
+
+#### How to make the widget?
+* simply
 
 ```swift
-WidgetController(
-    widgetState: widgetStateList,
-    widgets: [
-        Widget(view: AnyView(viewA), id: "viewA"),
-        Widget(view: AnyView(viewB), id: "viewB"),
-        Widget(view: AnyView(viewC), id: "viewC"),
-        Widget(view: AnyView(viewD), id: "viewD"),
-        Widget(view: AnyView(viewE), id: "viewE") 
-    ]
-){ _ in
-    
-}
-```
-
-```swift
-Widget(view: AnyView(yourView), id: "yourViewKey")
-```
- 
-Widgets is array of Widget consisting of your view covered by AnyView and id.
-
-id is important. Because widgetState tracks and finds your view by id.
-
-So don't forget to match Widget's id and widgetState's id
-
-```swift
-var widgetStateList = [("viewA", true), ("viewB", false), ("viewC", true)]
-
-widgets: [
-    Widget(view: AnyView(viewA), id: "viewA"),
-    Widget(view: AnyView(viewB), id: "viewB"),
-    Widget(view: AnyView(viewC), id: "viewC")
-]
-```
-If those are different, widgetcontroller can't find view.
-
-**Widgets array's order doesn't impact on real widget's order**
-
-This widgetStateList's order is important.
-```swift
-var widgetStateList = [("viewA", true), ("viewB", false), ("viewC", true)]
-```
-
-This widgets list's order is not important.
-```swift
-widgets: [
-    Widget(view: AnyView(viewA), id: "viewA"),
-    Widget(view: AnyView(viewB), id: "viewB"),
-    Widget(view: AnyView(viewC), id: "viewC")
-]
-```
-
-## 6. Store Widget's State permanently
-
-When app close and delete everything, Widgetcontroller is useless as product. 
-
-So you can save widget's state by using closure.
-
-It returns chaged widget state list when user complete editing.
-
-
-```swift
-WidgetController(
-    widgetState: [],
-    widgets: []
-){ changedWidgetState in
-    //rerender view
-    widgetStateList = chagedWidgetStateList
-    //save widgetState as [String]
-    UserDefaults.standard.set(widgetStateList.encode(), forKey: "whateveryouwant")
-}
-```
-
-`.encode() : [(String, Bool)] -> [String]`
-
-
-And you can initialize widget state list  
-
-```swift
-init() {
-    let stringDataFromDB = UserDefaults.standard.array(forKey: "whateveryouwant") as? [String] ?? []
-    if stringDataFromDB.isEmpty {
-        //set default
-        self._widgetStateList = State(initialValue: [("viewA", true), ("viewB", false), ("viewC", true), ("viewD", false), ("viewE", true)])
-    }else {
-        //decode: [String] -> [(String, Bool)]
-        self._widgetStateList = State(initialValue: stringDataFromDB.decode())
+Widget(identifier: "viewA") {
+    VStack {
+        Text("This is a Test Label")
     }
-    
 }
 ```
-`.decode() : [String] -> [(String, Bool)]`
 
-## 7. Try glassBackgound modifier
+
+## 5. Complete
+
 
 ```swift
-Widget(view: AnyView(viewA.glassBackground(padding: 10)), id: "viewA")
+var body: some View {
+    WidgetController($widgetState) {
+        Widget(identifier: "viewA") {
+            //your view
+        }
+        Widget(identifier: "viewB") {
+            //your view
+        }
+        Widget(identifier: "viewC") {
+            //your view
+        }
+        Widget(identifier: "viewD") {
+            //your view
+        }
+        Widget(identifier: "viewE") {
+            //your view
+        }            
+    }   
+}
 ```
 
-This view modifier will make it beautiful.
+As you may have noticed, the values of the key in the widgetState in step 2 made and the identifier in the widget must be the same.
+
 
 # Sample Code 
 
@@ -189,50 +121,39 @@ Sample code is uploaded with package
 
 ```swift
 import SwiftUI
-//import WidgetController
+import WidgetController
 
 struct ContentView: View {
     
-    @State private var widgetStateList: [(String, Bool)]
-    
-    //load widgetStateList from DB
-    init() {
-        let stringDataFromDB = UserDefaults.standard.array(forKey: "whateveryouwant") as? [String] ?? []
-        if stringDataFromDB.isEmpty {
-            //set default state
-            self._widgetStateList = State(initialValue: [("viewA", true), ("viewB", false), ("viewC", true), ("viewD", false), ("viewE", true)])
-        }else {
-            //decode: [String] -> [(String, Bool)]
-            self._widgetStateList = State(initialValue: stringDataFromDB.decode())
-        }
+    @State private var widgetStateList = WidgetState([("viewA", true),("viewB", true),("viewC", true),("viewD", true),("viewE", true),("viewF", true),("viewG", true),("viewH", true)])
         
-    }
-    
-    //your custom view here
-    let viewA: some View  = RoundedRectangle(cornerRadius: 15).fill(.red).frame(height: 100)
-    let viewB: some View  = RoundedRectangle(cornerRadius: 15).fill(.orange).frame(height: 100)
-    let viewC: some View  = RoundedRectangle(cornerRadius: 15).fill(.green).frame(height: 100)
-    let viewD: some View  = RoundedRectangle(cornerRadius: 15).fill(.blue).frame(height: 100)
-    let viewE: some View  = RoundedRectangle(cornerRadius: 15).fill(.indigo).frame(height: 100)
-    
-    
     var body: some View {
-        WidgetController(
-            widgetState: widgetStateList,
-            widgets: [
-                Widget(view: AnyView(viewA.glassBackground(padding: 10)), id: "viewA"),
-                Widget(view: AnyView(viewB.glassBackground(padding: 10)), id: "viewB"),
-                Widget(view: AnyView(viewC), id: "viewC"),
-                Widget(view: AnyView(viewD), id: "viewD"),
-                Widget(view: AnyView(viewE.glassBackground(padding: 10)), id: "viewE")
-            ]
-        ){ chagedWidgetStateList in
-            //rerender view
-            widgetStateList = chagedWidgetStateList
-            //save widgetState as [String]
-            UserDefaults.standard.set(widgetStateList.encode(), forKey: "whateveryouwant")
+        WidgetController($widgetStateList) {
+            Widget(identifier: "viewA") {
+                RoundedRectangle(cornerRadius: 15).fill(.red).frame(height: 100)
+            }
+            Widget(identifier: "viewB") {
+                RoundedRectangle(cornerRadius: 15).fill(.orange).frame(height: 100)
+            }
+            Widget(identifier: "viewC") {
+                RoundedRectangle(cornerRadius: 15).fill(.yellow).frame(height: 100)
+            }
+            Widget(identifier: "viewD") {
+                RoundedRectangle(cornerRadius: 15).fill(.green).frame(height: 100)
+            }
+            Widget(identifier: "viewE") {
+                RoundedRectangle(cornerRadius: 15).fill(.blue).frame(height: 100)
+            }
+            Widget(identifier: "viewF") {
+                RoundedRectangle(cornerRadius: 15).fill(.cyan).frame(height: 100)
+            }
+            Widget(identifier: "viewG") {
+                RoundedRectangle(cornerRadius: 15).fill(.indigo).frame(height: 100)
+            }
+            Widget(identifier: "viewH") {
+                RoundedRectangle(cornerRadius: 15).fill(.pink).frame(height: 100)
+            }
         }
-        
     }
 }
 
@@ -241,7 +162,6 @@ struct ContentView_Previews: PreviewProvider {
         ContentView()
     }
 }
-
 ```
 
 </details>
