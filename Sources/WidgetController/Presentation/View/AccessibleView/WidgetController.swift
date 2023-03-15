@@ -41,6 +41,7 @@ public struct WidgetController: View {
         self.widgetDescription = widgetDescription
         let cv = content()
         self.widgets = [cv]
+        devideShowingWidgetAndHiddenWidget()
     }
     
     public init (
