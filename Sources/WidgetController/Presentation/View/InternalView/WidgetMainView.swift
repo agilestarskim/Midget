@@ -12,6 +12,9 @@ struct WidgetMainView: View {
                 ForEach(vm.showingWidgets, id: \.identifier) { widget in
                     widget.content
                         .padding()
+                        .onTapGesture {
+                            widget.onTouch()
+                        }
                 }
                 Button(widgetDescription.edit) {
                     withAnimation{

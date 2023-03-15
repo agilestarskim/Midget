@@ -7,28 +7,28 @@ struct SampleView: View {
         
     var body: some View {
         WidgetController($widgetState) {
-            Widget(identifier: "viewA") {
+            Widget("viewA") {
                 RoundedRectangle(cornerRadius: 15).fill(.red).frame(height: 100)
             }
-            Widget(identifier: "viewB") {
+            Widget("viewB") {
                 RoundedRectangle(cornerRadius: 15).fill(.orange).frame(height: 100)
             }
-            Widget(identifier: "viewC") {
+            Widget("viewC") {
                 RoundedRectangle(cornerRadius: 15).fill(.yellow).frame(height: 100)
             }
-            Widget(identifier: "viewD") {
+            Widget("viewD") {
                 RoundedRectangle(cornerRadius: 15).fill(.green).frame(height: 100)
             }
-            Widget(identifier: "viewE") {
+            Widget("viewE") {
                 RoundedRectangle(cornerRadius: 15).fill(.cyan).frame(height: 100)
             }
-            Widget(identifier: "viewF") {
+            Widget("viewF") {
                 RoundedRectangle(cornerRadius: 15).fill(.blue).frame(height: 100)
             }
-            Widget(identifier: "viewG") {
+            Widget("viewG") {
                 RoundedRectangle(cornerRadius: 15).fill(.purple).frame(height: 100)
             }
-            Widget(identifier: "viewH") {
+            Widget("viewH") {
                 RoundedRectangle(cornerRadius: 15).fill(.indigo).frame(height: 100)
             }
         }   

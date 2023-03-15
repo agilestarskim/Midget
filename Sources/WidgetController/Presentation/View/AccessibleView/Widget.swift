@@ -17,13 +17,20 @@ public struct Widget: IdentifiableView {
     
     public let identifier: String
     public let content: AnyView
+    public let onTouch: () -> Void
     
     ///  - Parameters:
     ///     - identefier: string key to distinguish views
-    public init(identifier: String, @ViewBuilder content: () -> some View){
+    public init(_ identifier: String,
+                @ViewBuilder content: () -> some View,
+                onTouch: @escaping () -> Void = {}
+    ){
         self.identifier = identifier
         self.content = AnyView(content())
+        self.onTouch = onTouch
     }
+    
+    
     
     public var body: some View {
         content
