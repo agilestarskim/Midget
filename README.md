@@ -78,7 +78,7 @@ Place the WidgetController where you want it and pass the just created WidgetSta
 * simply
 
 ```swift
-Widget(identifier: "viewA") {
+Widget("viewA") {
     VStack {
         Text("This is a Test Label")
     }
@@ -92,19 +92,19 @@ Widget(identifier: "viewA") {
 ```swift
 var body: some View {
     WidgetController($widgetState) {
-        Widget(identifier: "viewA") {
+        Widget("viewA") {
             //your view
         }
-        Widget(identifier: "viewB") {
+        Widget("viewB") {
             //your view
         }
-        Widget(identifier: "viewC") {
+        Widget("viewC") {
             //your view
         }
-        Widget(identifier: "viewD") {
+        Widget("viewD") {
             //your view
         }
-        Widget(identifier: "viewE") {
+        Widget("viewE") {
             //your view
         }            
     }   
@@ -112,6 +112,18 @@ var body: some View {
 ```
 
 As you may have noticed, the values of the key in the widgetState in step 2 made and the identifier in the widget must be the same.
+
+## 6. Features
+
+#### onTouch
+* When you click a widget in the non-edit mode, call the closure.
+```swift
+Widget("viewA") {
+    //your view
+} onTouch: {
+    print("viewA Touched")
+}
+```
 
 
 # Sample Code 
