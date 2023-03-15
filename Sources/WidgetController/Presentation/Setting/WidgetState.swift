@@ -22,12 +22,19 @@ import Foundation
 ///         ]
 ///     )
 ///
-public class WidgetState {
+public struct WidgetState: Equatable {
+    public static func == (lhs: WidgetState, rhs: WidgetState) -> Bool {
+        let firstStringArray: [String] = lhs.stateList.map { $0.0 }
+        let secondStringArray: [String] = rhs.stateList.map { $0.0 }
+        return firstStringArray == secondStringArray
+    }
+    
     var stateList: [(String, Bool)] {
         didSet {
             saveWidgetStateToUserDefaults(stateList)
         }
     }
+    
     let saveKey: String
     
     ///  - Parameters:
