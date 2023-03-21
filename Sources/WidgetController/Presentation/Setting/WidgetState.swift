@@ -23,6 +23,11 @@ import Foundation
 ///     )
 ///
 public struct WidgetState: Equatable {
+    
+    public enum Option {
+        case showIncorrectID, hideIncorrectID
+    }
+    
     public static func == (lhs: WidgetState, rhs: WidgetState) -> Bool {
         let firstStringArray: [String] = lhs.stateList.map { $0.0 }
         let secondStringArray: [String] = rhs.stateList.map { $0.0 }
@@ -36,12 +41,15 @@ public struct WidgetState: Equatable {
     }
     
     let saveKey: String
+    let option: Option
     
     ///  - Parameters:
     ///     - defaultWidgetState: The tuple array has a key that matches the widget's identifier and a bool value that determines whether to show the widget or not.
     ///     - saveKey: Key string to store the statelist in userDefault
-    public init(_ defaultWidgetState: [(String, Bool)], saveKey: String = "widgetStateSaveKey") {
+    ///     - option: Option to decide whether to show the view or not when the ID is not found
+    public init(_ defaultWidgetState: [(String, Bool)], saveKey: String = "widgetStateSaveKey", option: Option = .showIncorrectID) {
         self.saveKey = saveKey
+        self.option = option
         let stringDataFromDB = UserDefaults.standard.array(forKey: saveKey) as? [String] ?? []
         if stringDataFromDB.isEmpty {
             self.stateList = defaultWidgetState

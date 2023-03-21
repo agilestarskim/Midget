@@ -143,17 +143,59 @@ public struct WidgetController: View {
     /// Make sure that the key in the widgetStateList matches the ID value of the widget
     /// and decide whether to show the view based on the value in the widgetStateList.
     private func devideShowingWidgetAndHiddenWidget() {
-        for state in self.widgetState.stateList {
-            for widget in self.widgets {
+    
+        
+        let calibratedState = calibrateIncorrectIdentifier(self.widgetState.stateList, widgets.map { $0.identifier })
+        
+        for state in calibratedState {
+            for widget in widgets {
                 if state.1 && state.0 == widget.identifier {
                     vm.showingWidgets.append(widget)
                 } else if !state.1 && state.0 == widget.identifier {
                     vm.hiddenWidgets.append(widget)
                 }
+                
             }
         }
     }
     
+    ///Calibrate incorrect identifier.
+    private func calibrateIncorrectIdentifier(_ widgetState: [(String,Bool)], _ widgetIDs: [String]) -> [(String, Bool)] {
+        
+        if widgetState.count != Set(widgetIDs).count {
+            debugPrint("[WidgetController] The number of widget managed by widgetState does not match the number of widget declared in widgetController.")
+        }
+        let incorrectIDs = widgetIDs.filter { widgetID in
+            !widgetState.map { state in state.0 }.contains(widgetID)
+        }
+        
+        let incorrectIDsWithState: [(String, Bool)] = incorrectIDs.map { id in
+            switch self.widgetState.option {
+            case .showIncorrectID:
+                return (id, true)
+            case .hideIncorrectID:
+                return (id, false)
+            }
+        }
+        
+        let correctIDs = widgetIDs.filter { widgetID in
+            widgetState.map { state in state.0 }.contains(widgetID)
+        }
+        
+        let correctIDsWithState: [(String, Bool)] = correctIDs.map { id in
+            var isShow: Bool = false
+            for state in widgetState {
+                if state.0 == id {
+                    isShow = state.1
+                }
+            }
+            return (id, isShow)
+        }
+        
+        self.widgetState.saveWidgetStateToUserDefaults(correctIDsWithState + incorrectIDsWithState)
+        
+        return correctIDsWithState + incorrectIDsWithState
+    }
     
     public var body: some View {
         GeometryReader { globalGeo in
@@ -161,7 +203,7 @@ public struct WidgetController: View {
                     if !isEditMode{
                         WidgetMainView(isEditMode: $isEditMode, widgetDescription: widgetDescription)
                     } else {
-                        WidgetEditView(isEditMode: $isEditMode,widgetDescription: widgetDescription){ changedWidgetState in
+                        WidgetEditView(isEditMode: $isEditMode, widgetDescription: widgetDescription){ changedWidgetState in
                             self.widgetState.stateList = changedWidgetState
                         }
                         .onAppear{ vm.globalScreenSize = globalGeo.size}

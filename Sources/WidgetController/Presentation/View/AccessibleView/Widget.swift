@@ -26,11 +26,9 @@ public struct Widget: IdentifiableView {
                 onTouch: @escaping () -> Void = {}
     ){
         self.identifier = identifier
-        self.content = AnyView(content())
+        self.content = AnyView(content().frame(maxWidth: .infinity))
         self.onTouch = onTouch
     }
-    
-    
     
     public var body: some View {
         content
