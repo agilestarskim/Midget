@@ -7,7 +7,7 @@ typealias IdentifiableView = View & Equatable
 ///
 /// A non-redundant key that can recognize the view is passed to the constructor factor and the view is passed to the trailing closure.
 ///
-///         Widget(identifier: "viewA") {
+///         Widget("viewA") {
 ///             VStack {
 ///                 Text("This is a Test Label")
 ///             }

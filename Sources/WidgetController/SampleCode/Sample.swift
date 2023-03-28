@@ -3,10 +3,19 @@ import SwiftUI
 
 struct SampleView: View {
     
-    @State private var widgetState = WidgetState([("viewA", true),("viewB", true),("viewC", true),("viewD", true),("viewE", true),("viewF", false),("viewG", true),("viewH", false)])
+    @State private var widgetStates = [
+        (id: "viewA", isVisible: true),
+        (id: "viewB", isVisible: true),
+        (id: "viewC", isVisible: true),
+        (id: "viewD", isVisible: true),
+        (id: "viewE", isVisible: true),
+        (id: "viewF", isVisible: true),
+        (id: "viewG", isVisible: true),
+        (id: "viewH", isVisible: true)
+    ]
         
     var body: some View {
-        WidgetController($widgetState) {
+        WidgetController($widgetStates) {
             Widget("viewA") {
                 RoundedRectangle(cornerRadius: 15).fill(.red).frame(height: 100)
             }

@@ -1,19 +1,18 @@
 import SwiftUI
 
-struct WidgetSheetView: View {
+struct WidgetAddView: View {
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var vm: WidgetController.ViewModel
     
     var body: some View {
         ScrollView {
-            ForEach(0..<vm.hiddenWidgets.count, id: \.self){ index in
-                vm.hiddenWidgets[index].content
+            ForEach(vm.widgetInfos.filter{!$0.isVisible}, id: \.identifier){ widget in
+                widget.view
                 .shadow(radius: 10, x: 10, y: 10)
                 .padding()
                 .onTapGesture {
                     withAnimation{
-                        vm.showingWidgets.append(vm.hiddenWidgets[index])
-                        vm.hiddenWidgets.remove(at: index)
+                        vm.toggleIsVisible(widget)                        
                         dismiss()
                     }
                 }
