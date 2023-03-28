@@ -1,92 +1,60 @@
-//import SwiftUI
-//
-//struct WidgetView: View {
-//    
-//    @EnvironmentObject var vm: WidgetController.ViewModel
-//    let widget: Widget
-//    // geometry proxy of widget. it allocates when view appeared.
-//    @State var geoProxy: GeometryProxy? = nil
-//    @GestureState var dragState: DragState = .inactive
-//    @State private var scrollState: ScrollState = .normal
-//    
-//    var editFrame: CGRect {
-//        return geoProxy?.frame(in: .named(WidgetController.ViewModel.Coordinator.editView)) ?? CGRect()
-//    }
-//    
-//    var globalFrame: CGRect {
-//        return geoProxy?.frame(in: .named(WidgetController.ViewModel.Coordinator.globalView)) ?? CGRect()
-//    }
-//    
-//    var id: String {
-//        widget.identifier
-//    }
-//    
-//    var index: Int {
-//        vm.showingWidgets.firstIndex(of: widget) ?? -1
-//    }
-//    
+import SwiftUI
+
+struct WidgetView: View {
+    
+    @EnvironmentObject var vm: WidgetController.ViewModel
+    @State private var isDragging: Bool = false
+    @State private var offset: CGSize = .zero
+    let widget: WidgetInfo
+    
+    
+    var body: some View {
+        VStack {
+            if isDragging {
+                widget.view
+                    .offset(offset)
+                    .scaleEffect(1.05)
+            } else {
+                widget.view
+                    .editable {
+                        vm.selectedWidget = widget
+                        vm.showingRemoveAlert = true
+                    }
+                    .wiggle()
+                    .scaleEffect(1.0)
+            }
+        }
+        .padding()
+        .delayedInput(delay: 0.1)
+        .gesture(
+            LongPressGesture(minimumDuration: 0.3)
+                .onEnded{ _ in
+                    isDragging = true
+                }
+                .sequenced(before: DragGesture(minimumDistance: 0)
+                    .onChanged{ value in
+                        withAnimation(.linear(duration: 0.2)) {
+                            self.offset = value.translation
+                        }
+                    }
+                    .onEnded { _ in
+                        self.isDragging = false
+                        self.offset = .zero
+                    }
+            )
+        )
+        .zIndex(isDragging ? 1: 0)
+    }
 //    var body: some View {
-//        
-//        let dragGesture = DragGesture()
-//            .onChanged{ drag in
-//                // It could be zero when it's first dragging.
-//                guard globalFrame != .zero else { return }
-//                guard editFrame != .zero else { return }
-//                // Allow only solid drag.
-//                guard abs(drag.translation.height) > 20 else { return }
-//                // When dragging widget touches the top of screen.
-//                if globalFrame.minY < 0 {
-//                    scrollState = .up
-//                }
-//                //when dragging widget touches the botton of screen.
-//                else if vm.globalScreenSize.height - globalFrame.maxY < 0 {
-//                    scrollState = .down
-//                }
-//                else {
-//                    scrollState = .normal
-//                }
-//                // check if widgets are crushed in every drag
-//                vm.detectCollision(id: self.id, draggingFrame: editFrame)
-//                
-//            }
-//        
-//        let longPressDrag = LongPressGesture().onEnded { _ in
-//                // When long press end, set selected widget's frame.
-//                // It's for calculating empty view' height.
-//                vm.setSelectedFixedFrame(frame: editFrame)
-//            }
-//            .sequenced(before: dragGesture)
-//            .updating($dragState) { value, state, transaction in
-//                switch value {
-//                case .first(true):
-//                    state = .pressing
-//                case .second(true, let drag):
-//                    if drag?.translation == nil {
-//                        vm.feedback.prepare()
-//                        state = .pressing
-//                        vm.feedback.impactOccurred()
-//                    } else {
-//                        state = .dragging(translation: drag?.translation ?? .zero)
-//                    }
-//                default:
-//                    state = .inactive
-//                }
-//            }
-//            // When user every motion end.
-//            .onEnded { value in
-//                guard case .second(true, _) = value else { return }
-//                scrollState = .normal
-//                vm.swapWidget()
-//                vm.initialize()
-//            }
-//        
+        
+        
 //        VStack{
 //            if dragState.isDragging {
 //                widget.content
 //                    .background(GeometryReader { geo in
 //                        Color.clear
 //                            .preference(key: GeometryPreferenceKey.self, value: geo)
-//                            
+//
 //                    })
 //                    .offset(dragState.translation)
 //                    .animation(.linear(duration: 0.1), value: dragState.translation)
@@ -139,11 +107,11 @@
 //            }
 //        }
 //    }
-//    
+    
 //    func scrollToUP() {
 //        // currentIndex is showingWidget's index, and it's for enumerating in loop
 //        var currentIndex = vm.collidedIndex != -1 ? vm.collidedIndex : index
-//        
+//
 //        Timer.scheduledTimer(withTimeInterval: 0.3, repeats: true, block: { Timer in
 //            // check valid index of showingWidgets.
 //            if scrollState == .up && currentIndex >= vm.showingWidgets.startIndex && currentIndex < vm.showingWidgets.endIndex {
@@ -159,11 +127,11 @@
 //
 //        })
 //    }
-//    
+//
 //    func scrollToDown() {
 //        var currentIndex = vm.collidedIndex != -1 ? vm.collidedIndex : index
 //        Timer.scheduledTimer(withTimeInterval: 0.3, repeats: true, block: { Timer in
-//            
+//
 //            if  scrollState == .down && currentIndex >= vm.showingWidgets.startIndex && currentIndex < vm.showingWidgets.endIndex {
 //                let destination = vm.showingWidgets[currentIndex].identifier
 //                withAnimation{
@@ -175,47 +143,4 @@
 //            currentIndex += 1
 //        })
 //    }
-//}
-//
-//
-//extension WidgetView {
-//    
-//    enum DragState {
-//        case inactive
-//        case pressing
-//        case dragging(translation: CGSize)
-//        
-//        var translation: CGSize {
-//            switch self {
-//            case .inactive, .pressing:
-//                return .zero
-//            case .dragging(let translation):
-//                return translation
-//            }
-//        }
-//        
-//        var isActive: Bool {
-//            switch self {
-//            case .inactive:
-//                return false
-//            case .pressing, .dragging:
-//                return true
-//            }
-//        }
-//        
-//        var isDragging: Bool {
-//            switch self {
-//            case .inactive, .pressing:
-//                return false
-//            case .dragging:
-//                return true
-//            }
-//        }
-//    }
-//    
-//    enum ScrollState {
-//        case up
-//        case normal
-//        case down
-//    }
-//}
+}

@@ -7,6 +7,11 @@
 
 import SwiftUI
 
+struct WidgetPosition {
+    let identifier: String
+    var position: CGRect
+}
+
 extension WidgetController {
     final class ViewModel: ObservableObject {
         
@@ -17,6 +22,8 @@ extension WidgetController {
         @Published var isEditMode: Bool = false
         @Published var showingAddSheet = false
         @Published var showingRemoveAlert = false
+        
+        @Published var widgetPositions: [WidgetPosition] = []
         
         var selectedWidget: WidgetInfo? = nil
         
@@ -35,11 +42,10 @@ extension WidgetController {
                 
                 let id: String = widgetState.id
                 let isVisible: Bool = widgetState.isVisible
-                let position: CGRect = CGRect()
                 let view: AnyView = widget.content
                 let onTouch: () -> Void = widget.onTouch
                 
-                widgetInfos.append(WidgetInfo(identifier: id, isVisible: isVisible, frame: position, view: view, onTouch: onTouch))
+                widgetInfos.append(WidgetInfo(identifier: id, isVisible: isVisible, view: view, onTouch: onTouch))
             }
             
             self.widgetInfos = widgetInfos

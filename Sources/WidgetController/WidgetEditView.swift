@@ -2,7 +2,9 @@ import SwiftUI
 
 struct WidgetEditView: View {
     @EnvironmentObject var vm: WidgetController.ViewModel
+    
     var body: some View {
+
         ScrollViewReader { value in
             VStack{
                 HStack {
@@ -26,14 +28,9 @@ struct WidgetEditView: View {
                 }
                 .padding(.horizontal)
                 
-                ForEach(vm.widgetInfos.filter {$0.isVisible}, id: \.identifier){ widget in
-                    widget.view
-                        .editable {
-                            vm.selectedWidget = widget
-                            vm.showingRemoveAlert = true
-                        }
-                        .wiggle()
-                        .padding()
+                
+                ForEach(vm.widgetInfos.filter {$0.isVisible}, id: \.identifier){ widget in                    
+                    WidgetView(widget: widget)
                 }
 
             }
@@ -56,6 +53,10 @@ struct WidgetEditView: View {
                 WidgetAddView()
             }
         }
+//        .onPreferenceChange(GeometryPreferenceKey.self) { value in
+//            guard let value = value else { return }
+//            print(value.frame(in: .global))
+//        }
     }
 }
 

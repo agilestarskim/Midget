@@ -22,7 +22,6 @@ import SwiftUI
 public struct WidgetController: View {
     
     @ObservedObject var vm: WidgetController.ViewModel
-    @State private var isEditMode = false
     
     /// create widget controller that display widgets
     /// - Parameters:
@@ -131,7 +130,7 @@ public struct WidgetController: View {
 
     
     public var body: some View {
-        ScrollView {
+        ScrollView(showsIndicators: false) {
             if vm.isEditMode {
                 WidgetEditView()
             } else {
