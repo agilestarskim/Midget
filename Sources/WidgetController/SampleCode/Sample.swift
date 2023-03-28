@@ -15,7 +15,7 @@ struct SampleView: View {
     ]
         
     var body: some View {
-        WidgetController($widgetStates) {
+        WidgetController(widgetStates) {
             Widget("viewA") {
                 RoundedRectangle(cornerRadius: 15).fill(.red).frame(height: 100)
             }
@@ -40,7 +40,9 @@ struct SampleView: View {
             Widget("viewH") {
                 RoundedRectangle(cornerRadius: 15).fill(.indigo).frame(height: 100)
             }
-        }   
+        } onChanged: { changedStates in
+            self.widgetStates = changedStates
+        }
     }
 }
 

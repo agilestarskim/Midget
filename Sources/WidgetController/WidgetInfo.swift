@@ -16,4 +16,5 @@ struct WidgetInfo: Equatable {
     var isVisible: Bool
     var frame: CGRect
     var view: AnyView
+    let onTouch: () -> Void
 }

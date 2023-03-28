@@ -1,19 +1,19 @@
 import SwiftUI
 
-extension Array where Element == (String, Bool) {
+extension Array where Element == WidgetState {
     public func encode() -> [String] {
         
         return self.map({ e -> String in
-            return "\(e.0),\(e.1)"
+            return "\(e.id),\(e.isVisible)"
         })
     }
 }
 
 extension Array where Element == String {
-    public func decode() -> [(String, Bool)] {
-        return self.map({ e -> (String, Bool) in
+    public func decode() -> [WidgetState] {
+        return self.map({ e -> (id: String, isVisible: Bool) in
             let component = e.components(separatedBy: ",")
-            return (component.first!, Bool(component.last!)!)
+            return (id: component.first!, isVisible: Bool(component.last!)!)
         })
     }
 }

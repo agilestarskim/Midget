@@ -21,10 +21,6 @@ import SwiftUI
 /// 
 public struct WidgetController: View {
     
-    @Binding var widgetStates: [WidgetState]
-    let widgetDescription: WidgetDescription
-    let widgets: [Widget]
-    
     @ObservedObject var vm: WidgetController.ViewModel
     @State private var isEditMode = false
     
@@ -34,128 +30,112 @@ public struct WidgetController: View {
     ///     - widgetDescription: Objects that can localize or customize text in the UI
     ///     - content: widget
     public init (
-        _ widgetStates: Binding<[WidgetState]>,
+        _ widgetStates: [WidgetState],
         _ widgetDescription:WidgetDescription = WidgetDescription(),
-        @ViewBuilder content: @escaping () -> Widget
+        @ViewBuilder content: @escaping () -> Widget,
+        onChanged: @escaping ([WidgetState]) -> Void
     ){
-        self._widgetStates = widgetStates
-        self.widgetDescription = widgetDescription
+        
         let widget = content()
-        self.widgets = [widget]
-        self.vm = ViewModel(widgetStates: widgetStates.wrappedValue, widgets: [widget])
+        
+        self.vm = ViewModel(widgetStates: widgetStates, widgets: [widget], onChanged: onChanged, description: widgetDescription)
     }
     
     public init (
-        _ widgetStates: Binding<[WidgetState]>,
+        _ widgetStates: [WidgetState],
         _ widgetDescription:WidgetDescription = WidgetDescription(),
-        @ViewBuilder content: @escaping () -> TupleView<(Widget, Widget)>
+        @ViewBuilder content: @escaping () -> TupleView<(Widget, Widget)>,
+        onChanged: @escaping ([WidgetState]) -> Void
     ) {
-        self._widgetStates = widgetStates
-        self.widgetDescription = widgetDescription
         let widget = content().value
         let widgets = [widget.0, widget.1]
-        self.widgets = widgets
-        self.vm = ViewModel(widgetStates: widgetStates.wrappedValue, widgets: widgets)
+        self.vm = ViewModel(widgetStates: widgetStates, widgets: widgets, onChanged: onChanged, description: widgetDescription)
     }
 
     public init (
-        _ widgetStates: Binding<[WidgetState]>,
+        _ widgetStates: [WidgetState],
         _ widgetDescription:WidgetDescription = WidgetDescription(),
-        @ViewBuilder content: @escaping () -> TupleView<(Widget, Widget, Widget)>
+        @ViewBuilder content: @escaping () -> TupleView<(Widget, Widget, Widget)>,
+        onChanged: @escaping ([WidgetState]) -> Void
     ) {
-        self._widgetStates = widgetStates
-        self.widgetDescription = widgetDescription
         let widget = content().value
         let widgets = [widget.0, widget.1, widget.2]
-        self.widgets = widgets
-        self.vm = ViewModel(widgetStates: widgetStates.wrappedValue, widgets: widgets)
+        self.vm = ViewModel(widgetStates: widgetStates, widgets: widgets, onChanged: onChanged, description: widgetDescription)
     }
     
     public init (
-        _ widgetStates: Binding<[WidgetState]>,
+        _ widgetStates: [WidgetState],
         _ widgetDescription:WidgetDescription = WidgetDescription(),
-        @ViewBuilder content: @escaping () -> TupleView<(Widget, Widget, Widget, Widget)>
+        @ViewBuilder content: @escaping () -> TupleView<(Widget, Widget, Widget, Widget)>,
+        onChanged: @escaping ([WidgetState]) -> Void
     ) {
-        self._widgetStates = widgetStates
-        self.widgetDescription = widgetDescription
         let widget = content().value
         let widgets = [widget.0, widget.1, widget.2, widget.3]
-        self.widgets = widgets
-        self.vm = ViewModel(widgetStates: widgetStates.wrappedValue, widgets: widgets)
+        self.vm = ViewModel(widgetStates: widgetStates, widgets: widgets, onChanged: onChanged, description: widgetDescription)
     }
     
     public init (
-        _ widgetStates: Binding<[WidgetState]>,
+        _ widgetStates: [WidgetState],
         _ widgetDescription:WidgetDescription = WidgetDescription(),
-        @ViewBuilder content: @escaping () -> TupleView<(Widget, Widget, Widget, Widget, Widget)>
+        @ViewBuilder content: @escaping () -> TupleView<(Widget, Widget, Widget, Widget, Widget)>,
+        onChanged: @escaping ([WidgetState]) -> Void
     ) {
-        self._widgetStates = widgetStates
-        self.widgetDescription = widgetDescription
         let widget = content().value
         let widgets = [widget.0, widget.1, widget.2, widget.3, widget.4]
-        self.widgets = widgets
-        self.vm = ViewModel(widgetStates: widgetStates.wrappedValue, widgets: widgets)
+        self.vm = ViewModel(widgetStates: widgetStates, widgets: widgets, onChanged: onChanged, description: widgetDescription)
     }
     
     public init (
-        _ widgetStates: Binding<[WidgetState]>,
+        _ widgetStates: [WidgetState],
         _ widgetDescription:WidgetDescription = WidgetDescription(),
-        @ViewBuilder content: @escaping () -> TupleView<(Widget, Widget, Widget, Widget, Widget, Widget)>
+        @ViewBuilder content: @escaping () -> TupleView<(Widget, Widget, Widget, Widget, Widget, Widget)>,
+        onChanged: @escaping ([WidgetState]) -> Void
     ) {
-        self._widgetStates = widgetStates
-        self.widgetDescription = widgetDescription
         let widget = content().value
         let widgets = [widget.0, widget.1, widget.2, widget.3, widget.4, widget.5]
-        self.widgets = widgets
-        self.vm = ViewModel(widgetStates: widgetStates.wrappedValue, widgets: widgets)
+        self.vm = ViewModel(widgetStates: widgetStates, widgets: widgets, onChanged: onChanged, description: widgetDescription)
     }
     
     public init (
-        _ widgetStates: Binding<[WidgetState]>,
+        _ widgetStates: [WidgetState],
         _ widgetDescription:WidgetDescription = WidgetDescription(),
-        @ViewBuilder content: @escaping () -> TupleView<(Widget, Widget, Widget, Widget, Widget, Widget, Widget)>
+        @ViewBuilder content: @escaping () -> TupleView<(Widget, Widget, Widget, Widget, Widget, Widget, Widget)>,
+        onChanged: @escaping ([WidgetState]) -> Void
     ) {
-        self._widgetStates = widgetStates
-        self.widgetDescription = widgetDescription
         let widget = content().value
         let widgets = [widget.0, widget.1, widget.2, widget.3, widget.4, widget.5, widget.6]
-        self.widgets = widgets
-        self.vm = ViewModel(widgetStates: widgetStates.wrappedValue, widgets: widgets)
+        self.vm = ViewModel(widgetStates: widgetStates, widgets: widgets, onChanged: onChanged, description: widgetDescription)
     }
     
     public init (
-        _ widgetStates: Binding<[WidgetState]>,
+        _ widgetStates: [WidgetState],
         _ widgetDescription:WidgetDescription = WidgetDescription(),
-        @ViewBuilder content: @escaping () -> TupleView<(Widget, Widget, Widget, Widget, Widget, Widget, Widget, Widget)>
+        @ViewBuilder content: @escaping () -> TupleView<(Widget, Widget, Widget, Widget, Widget, Widget, Widget, Widget)>,
+        onChanged: @escaping ([WidgetState]) -> Void
     ) {
-        self._widgetStates = widgetStates
-        self.widgetDescription = widgetDescription
         let widget = content().value
         let widgets = [widget.0, widget.1, widget.2, widget.3, widget.4, widget.5, widget.6, widget.7]
-        self.widgets = widgets
-        self.vm = ViewModel(widgetStates: widgetStates.wrappedValue, widgets: widgets)
+        self.vm = ViewModel(widgetStates: widgetStates, widgets: widgets, onChanged: onChanged, description: widgetDescription)
     }
     
     public init (
-        _ widgetStates: Binding<[WidgetState]>,
+        _ widgetStates: [WidgetState],
         _ widgetDescription:WidgetDescription = WidgetDescription(),
-        @ViewBuilder content: @escaping () -> TupleView<(Widget, Widget, Widget, Widget, Widget, Widget, Widget, Widget, Widget)>
+        @ViewBuilder content: @escaping () -> TupleView<(Widget, Widget, Widget, Widget, Widget, Widget, Widget, Widget, Widget)>,
+        onChanged: @escaping ([WidgetState]) -> Void
     ) {
-        self._widgetStates = widgetStates
-        self.widgetDescription = widgetDescription
         let widget = content().value
         let widgets = [widget.0, widget.1, widget.2, widget.3, widget.4, widget.5, widget.6, widget.7, widget.8]
-        self.widgets = widgets
-        self.vm = ViewModel(widgetStates: widgetStates.wrappedValue, widgets: widgets)
+        self.vm = ViewModel(widgetStates: widgetStates, widgets: widgets, onChanged: onChanged, description: widgetDescription)
     }
 
     
     public var body: some View {
         ScrollView {
             if vm.isEditMode {
-                WidgetEditView(widgetDescription: widgetDescription)
+                WidgetEditView()
             } else {
-                WidgetMainView(widgetDescription: widgetDescription)
+                WidgetMainView()
             }
         }
         .environmentObject(vm)

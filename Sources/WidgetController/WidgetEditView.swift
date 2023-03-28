@@ -2,9 +2,6 @@ import SwiftUI
 
 struct WidgetEditView: View {
     @EnvironmentObject var vm: WidgetController.ViewModel
-    let widgetDescription: WidgetDescription
-    
-    
     var body: some View {
         ScrollViewReader { value in
             VStack{
@@ -19,9 +16,10 @@ struct WidgetEditView: View {
                     Spacer()
 
                     Button{
+                        vm.complete()
                         vm.isEditMode = false
                     } label: {
-                        Text(widgetDescription.done)
+                        Text(vm.description.done)
                             .widgetButtonStyle(padding: 20)
                     }
 
@@ -36,23 +34,22 @@ struct WidgetEditView: View {
                         }
                         .wiggle()
                         .padding()
-                        
                 }
 
             }
         }
-        .alert(widgetDescription.alertTitle, isPresented: $vm.showingRemoveAlert) {
-            Button(widgetDescription.alertCancel, role: .cancel){
+        .alert(vm.description.alertTitle, isPresented: $vm.showingRemoveAlert) {
+            Button(vm.description.alertCancel, role: .cancel){
                 vm.selectedWidget = nil
             }
-            Button(widgetDescription.alertRemove, role: .destructive){
+            Button(vm.description.alertRemove, role: .destructive){
                 withAnimation {
                     vm.toggleIsVisible(vm.selectedWidget)
                 }                
                 vm.selectedWidget = nil
             }
         } message: {
-            Text(widgetDescription.alertMessage)
+            Text(vm.description.alertMessage)
         }
         .sheet(isPresented: $vm.showingAddSheet) {
             HalfSheet {
