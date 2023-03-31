@@ -21,7 +21,7 @@ struct WidgetMainView: View {
                         value.scrollTo(scrollDestination)
                     }
                     vm.isEditMode = true
-                }.widgetButtonStyle(padding: 15)
+                }.buttonStyle(WidgetButtonStyle())
             }
         }
     }

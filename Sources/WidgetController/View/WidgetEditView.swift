@@ -8,22 +8,16 @@ struct WidgetEditView: View {
         ScrollViewReader { value in
             VStack{
                 HStack {
-                    Button{
+                    Button("+"){
                         vm.showingAddSheet = true
-                    } label: {
-                        Text("+")
-                            .widgetButtonStyle(padding: 25)
-                    }
+                    }.buttonStyle(WidgetButtonStyle())
 
                     Spacer()
 
-                    Button{
+                    Button(vm.description.done){
                         vm.complete()
                         vm.isEditMode = false
-                    } label: {
-                        Text(vm.description.done)
-                            .widgetButtonStyle(padding: 20)
-                    }
+                    }.buttonStyle(WidgetButtonStyle())
 
                 }
                 .padding(.horizontal)
