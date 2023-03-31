@@ -15,5 +15,15 @@ struct WidgetInfo: Equatable {
     let identifier: String
     var isVisible: Bool
     var view: AnyView
+    var frame: CGRect?
     let onTouch: () -> Void
+    
+    
+    init(identifier: String, isVisible: Bool, view: AnyView, frame: CGRect? = nil, onTouch: @escaping () -> Void) {
+        self.identifier = identifier
+        self.isVisible = isVisible
+        self.view = view
+        self.frame = frame
+        self.onTouch = onTouch        
+    }
 }

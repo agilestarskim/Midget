@@ -29,11 +29,12 @@ struct WidgetEditView: View {
                 .padding(.horizontal)
                 
                 
-                ForEach(vm.widgetInfos.filter {$0.isVisible}, id: \.identifier){ widget in                    
+                ForEach(vm.visibleWidgets, id: \.identifier){ widget in                    
                     WidgetView(widget: widget)
                 }
-
             }
+            .onAppear { vm.scrollProxy = value }
+            .coordinateSpace(name: "scrollSpace")
         }
         .alert(vm.description.alertTitle, isPresented: $vm.showingRemoveAlert) {
             Button(vm.description.alertCancel, role: .cancel){

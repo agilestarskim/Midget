@@ -130,13 +130,19 @@ public struct WidgetController: View {
 
     
     public var body: some View {
-        ScrollView(showsIndicators: false) {
-            if vm.isEditMode {
-                WidgetEditView()
-            } else {
-                WidgetMainView()
+        GeometryReader { globalGeo in
+            ScrollView(showsIndicators: false) {
+                if vm.isEditMode {
+                    WidgetEditView()
+                } else {
+                    WidgetMainView()
+                }
             }
+            
+            .onAppear {
+                vm.deviceSize = globalGeo.size
+            }            
+            .environmentObject(vm)
         }
-        .environmentObject(vm)
     }
 }

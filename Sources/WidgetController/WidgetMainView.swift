@@ -8,7 +8,7 @@ struct WidgetMainView: View {
             VStack {
                 Color.clear.id(scrollDestination)
                 
-                ForEach(vm.widgetInfos.filter {$0.isVisible}, id: \.identifier) { widget in
+                ForEach(vm.visibleWidgets, id: \.identifier) { widget in
                     widget.view
                         .padding()
                         .onTapGesture {

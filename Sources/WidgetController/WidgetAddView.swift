@@ -6,7 +6,7 @@ struct WidgetAddView: View {
     
     var body: some View {
         ScrollView {
-            ForEach(vm.widgetInfos.filter{!$0.isVisible}, id: \.identifier){ widget in
+            ForEach(vm.invisibleWidgets, id: \.identifier){ widget in
                 widget.view
                 .shadow(radius: 10, x: 10, y: 10)
                 .padding()

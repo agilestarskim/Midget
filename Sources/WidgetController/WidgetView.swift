@@ -5,142 +5,109 @@ struct WidgetView: View {
     @EnvironmentObject var vm: WidgetController.ViewModel
     @State private var isDragging: Bool = false
     @State private var offset: CGSize = .zero
-    let widget: WidgetInfo
+    @State private var scale: CGFloat = 1.0
+    @State private var dragTranslation: CGFloat = .zero
+        
+    @State private var geo: GeometryProxy? = nil
     
+    func frame(space: CoordinateSpace) -> CGRect {
+        geo?.frame(in: space) ?? .zero
+    }
+    
+    let widget: WidgetInfo
     
     var body: some View {
         VStack {
             if isDragging {
-                widget.view
-                    .offset(offset)
-                    .scaleEffect(1.05)
+                ZStack {
+                    widget.view
+                    GeometryReader { geo in
+                        Color.clear
+                            .preference(key: GeometryPreferenceKey.self, value: geo)
+                    }
+                }
+                .offset(offset)
             } else {
                 widget.view
+                    .background {
+                        GeometryReader{ geo in
+                            Color.clear
+                                .preference(key: GeometryPreferenceKey.self, value: geo)
+                        }
+                    }
                     .editable {
                         vm.selectedWidget = widget
                         vm.showingRemoveAlert = true
                     }
                     .wiggle()
-                    .scaleEffect(1.0)
             }
         }
+        .onPreferenceChange(GeometryPreferenceKey.self) { value in
+            guard let value = value else { return }
+            self.geo = value
+        }
+        .onChange(of: vm.selectedWidget) { widget in
+            guard widget != nil else { return }
+            let frame = frame(space: .named("scrollSpace"))
+            vm.updateFrame(of: self.widget, into: frame)
+        }
+        .onChange(of: vm.scrollState) { state in
+            guard vm.selectedWidget == widget else { return }
+            if state == .up {
+                vm.scroll(to: .up)
+            } else if state == .down {
+                vm.scroll(to: .down)
+            }
+        }
+//        .onChange(of: vm.conflictedWidget, perform: { _ in
+//            vm.swap()
+//        })
+        .scaleEffect(scale)
         .padding()
         .delayedInput(delay: 0.1)
         .gesture(
             LongPressGesture(minimumDuration: 0.3)
                 .onEnded{ _ in
+                    withAnimation(.easeIn(duration: 0.1)) {
+                        scale = 1.05
+                    }
                     isDragging = true
+                    vm.selectedWidget = widget
                 }
                 .sequenced(before: DragGesture(minimumDistance: 0)
-                    .onChanged{ value in
+                    .onChanged{ drag in
                         withAnimation(.linear(duration: 0.2)) {
-                            self.offset = value.translation
+                            self.offset = drag.translation
+                            
+                            //너무 자주 업데이트 되는 것을 방지하기 위해 20pt만큼 움직일 때 마다 트리거
+                            guard abs(self.dragTranslation - drag.translation.height) > 15 else { return }
+                            
+                            let scrollFrame = frame(space: .named("scrollSpace"))
+                            let deviceFrame = frame(space: .global)
+                            //충돌확인
+//                            let editOrigin = CGPoint(x: self.editFrame.minX + drag.translation.width, y: self.editFrame.minY + drag.translation.height)
+//                            let editFrame = CGRect(origin: editOrigin, size: self.editFrame.size)
+                            vm.detectCollision(using: scrollFrame)
+                            
+                            //화면에 닿았을 때 스크롤
+                            //프레임을 벗어나는 것을 방지
+                            
+                            print(deviceFrame.midY)
+                            vm.checkTouchDevice(using: deviceFrame)
+                            
+                            self.dragTranslation = drag.translation.height
                         }
                     }
                     .onEnded { _ in
                         self.isDragging = false
                         self.offset = .zero
+                        self.scale = 1.0
+                        vm.selectedWidget = nil
+                        vm.conflictedWidget = nil
+                        vm.scrollState = .normal
                     }
             )
         )
         .zIndex(isDragging ? 1: 0)
     }
-//    var body: some View {
-        
-        
-//        VStack{
-//            if dragState.isDragging {
-//                widget.content
-//                    .background(GeometryReader { geo in
-//                        Color.clear
-//                            .preference(key: GeometryPreferenceKey.self, value: geo)
-//
-//                    })
-//                    .offset(dragState.translation)
-//                    .animation(.linear(duration: 0.1), value: dragState.translation)
-//                    .frame(height: vm.collidedWidget == nil ? vm.selectedFixedFrame.height : 0)
-//            }
-//            else{
-//                VStack {
-//                    // This view is for moving collided widget.
-//                    // It's like a trick pretending to swap widget position for a moment.
-//                    Color.clear
-//                        .frame(height: vm.collidedWidget == widget && vm.movingDirection == .upward ?
-//                               vm.selectedFixedFrame.height : 0 )
-//                    widget.content
-//                        .background(GeometryReader { geo in
-//                            Color.clear
-//                                .preference(key: GeometryPreferenceKey.self, value: geo)
-//                                // When view appears, set geo dictionary for detecting collid
-//                                .onAppear {
-//                                    let id = widget.identifier
-//                                    vm.showingWidgetsGeo.updateValue(geo, forKey: id)
-//                                }
-//                        })
-//                        .editable{
-//                            // When user pushes remove button, set the index to remove index and show alert.
-//                            vm.setIndexForRemove(index: index)
-//                            vm.showingRemoveAlert = true
-//                        }
-//                        .wiggle()
-//                    // Trick view to swap widget moving underward.
-//                    Color.clear
-//                        .frame(height: vm.collidedWidget == widget && vm.movingDirection == .downward ?
-//                               vm.selectedFixedFrame.height : 0 )
-//                }
-//            }
-//        }
-//        .zIndex(dragState.isActive ? 1 : 0)
-//        .scaleEffect(dragState.isActive ? 1.05 : 1.0)
-//        .animation(.linear(duration: 0.2), value: dragState.isActive)
-//        .onTapGesture { }
-//        .gesture(longPressDrag)
-//        .onPreferenceChange(GeometryPreferenceKey.self) { value in
-//            guard let value = value else { return }
-//            geoProxy = value
-//        }
-//        .onChange(of: scrollState){ ss in
-//            if ss == .up {
-//                scrollToUP()
-//            } else if ss == .down {
-//                scrollToDown()
-//            }
-//        }
-//    }
-    
-//    func scrollToUP() {
-//        // currentIndex is showingWidget's index, and it's for enumerating in loop
-//        var currentIndex = vm.collidedIndex != -1 ? vm.collidedIndex : index
-//
-//        Timer.scheduledTimer(withTimeInterval: 0.3, repeats: true, block: { Timer in
-//            // check valid index of showingWidgets.
-//            if scrollState == .up && currentIndex >= vm.showingWidgets.startIndex && currentIndex < vm.showingWidgets.endIndex {
-//                // convert index to id
-//                let destination = vm.showingWidgets[currentIndex].identifier
-//                withAnimation{
-//                    vm.scrollViewProxy?.scrollTo(destination)
-//                }
-//            } else {
-//                Timer.invalidate()
-//            }
-//            currentIndex -= 1
-//
-//        })
-//    }
-//
-//    func scrollToDown() {
-//        var currentIndex = vm.collidedIndex != -1 ? vm.collidedIndex : index
-//        Timer.scheduledTimer(withTimeInterval: 0.3, repeats: true, block: { Timer in
-//
-//            if  scrollState == .down && currentIndex >= vm.showingWidgets.startIndex && currentIndex < vm.showingWidgets.endIndex {
-//                let destination = vm.showingWidgets[currentIndex].identifier
-//                withAnimation{
-//                    vm.scrollViewProxy?.scrollTo(destination)
-//                }
-//            } else {
-//                Timer.invalidate()
-//            }
-//            currentIndex += 1
-//        })
-//    }
 }
