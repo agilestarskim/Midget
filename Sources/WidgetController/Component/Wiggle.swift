@@ -34,9 +34,9 @@ struct WiggleModifier: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-        .rotationEffect(.degrees(isWiggling ? 2.0 : 0))
+        .rotationEffect(.degrees(isWiggling ? 1.0 : -1.0))
         .animation(rotateAnimation, value: isWiggling)
-        .offset(x: 0, y: isWiggling ? 2.0 : 0)
+        .offset(x: 0, y: isWiggling ? 1.0 : -1.0)
         .animation(bounceAnimation, value: isWiggling)
         .onAppear() {
              isWiggling.toggle()

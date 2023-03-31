@@ -17,39 +17,33 @@ struct WidgetView: View {
     let widget: WidgetInfo
     
     var body: some View {
-        VStack {
+        ZStack {
             if isDragging {
-                ZStack {
-                    widget.view
-                    GeometryReader { geo in
-                        Color.clear
-                            .preference(key: GeometryPreferenceKey.self, value: geo)
-                    }
-                }
-                .offset(offset)
+                widget.view
             } else {
                 widget.view
-                    .background {
-                        GeometryReader{ geo in
-                            Color.clear
-                                .preference(key: GeometryPreferenceKey.self, value: geo)
-                        }
-                    }
                     .editable {
                         vm.selectedWidget = widget
                         vm.showingRemoveAlert = true
                     }
                     .wiggle()
             }
+            GeometryReader { geo in
+                Color.clear
+                    .preference(key: GeometryPreferenceKey.self, value: geo)
+            }
         }
+        .offset(offset)
         .onPreferenceChange(GeometryPreferenceKey.self) { value in
             guard let value = value else { return }
             self.geo = value
         }
         .onChange(of: vm.selectedWidget) { widget in
             guard widget != nil else { return }
-            let frame = frame(space: .named("scrollSpace"))
-            vm.updateFrame(of: self.widget, into: frame)
+            vm.updateFrame(of: self.widget, into: frame(space: .named("scrollSpace")))
+        }
+        .onChange(of: vm.hasMoved) { _ in
+            vm.updateFrame(of: self.widget, into: frame(space: .named("scrollSpace")))
         }
         .onChange(of: vm.scrollState) { state in
             guard vm.selectedWidget == widget else { return }
@@ -58,10 +52,7 @@ struct WidgetView: View {
             } else if state == .down {
                 vm.scroll(to: .down)
             }
-        }
-//        .onChange(of: vm.conflictedWidget, perform: { _ in
-//            vm.swap()
-//        })
+        }        
         .scaleEffect(scale)
         .padding()
         .delayedInput(delay: 0.1)
@@ -78,32 +69,24 @@ struct WidgetView: View {
                     .onChanged{ drag in
                         withAnimation(.linear(duration: 0.2)) {
                             self.offset = drag.translation
-                            
-                            //너무 자주 업데이트 되는 것을 방지하기 위해 20pt만큼 움직일 때 마다 트리거
-                            guard abs(self.dragTranslation - drag.translation.height) > 15 else { return }
-                            
-                            let scrollFrame = frame(space: .named("scrollSpace"))
-                            let deviceFrame = frame(space: .global)
-                            //충돌확인
-//                            let editOrigin = CGPoint(x: self.editFrame.minX + drag.translation.width, y: self.editFrame.minY + drag.translation.height)
-//                            let editFrame = CGRect(origin: editOrigin, size: self.editFrame.size)
-                            vm.detectCollision(using: scrollFrame)
-                            
-                            //화면에 닿았을 때 스크롤
-                            //프레임을 벗어나는 것을 방지
-                            
-                            print(deviceFrame.midY)
-                            vm.checkTouchDevice(using: deviceFrame)
-                            
-                            self.dragTranslation = drag.translation.height
                         }
+                        //너무 자주 업데이트 되는 것을 방지하기 위해 20pt만큼 움직일 때 마다 트리거
+                        guard abs(self.dragTranslation - drag.translation.height) > 15 else { return }
+                        
+                        self.dragTranslation = drag.translation.height
+                        
+                        let scrollFrame = frame(space: .named("scrollSpace"))
+                        let deviceFrame = frame(space: .global)
+                        //충돌확인
+                        vm.detectCollision(using: scrollFrame, of: widget)
+                        //자동 스크롤
+                        vm.checkTouchDevice(using: deviceFrame)                                                
                     }
                     .onEnded { _ in
                         self.isDragging = false
                         self.offset = .zero
                         self.scale = 1.0
-                        vm.selectedWidget = nil
-                        vm.conflictedWidget = nil
+                        vm.selectedWidget = nil                        
                         vm.scrollState = .normal
                     }
             )

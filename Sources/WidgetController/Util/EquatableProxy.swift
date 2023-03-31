@@ -1,3 +1,10 @@
+//
+//  EquatableProxy.swift
+//  
+//
+//  Created by 김민성 on 2023/03/31.
+//
+
 import SwiftUI
 
 extension GeometryProxy: Equatable {
@@ -7,4 +14,3 @@ extension GeometryProxy: Equatable {
         lhs.frame(in: .global).midY == rhs.frame(in: .global).midY
     }
 }
-

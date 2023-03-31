@@ -31,7 +31,7 @@ struct WidgetEditView: View {
                 
                 ForEach(vm.visibleWidgets, id: \.identifier){ widget in                    
                     WidgetView(widget: widget)
-                }
+                }                
             }
             .onAppear { vm.scrollProxy = value }
             .coordinateSpace(name: "scrollSpace")

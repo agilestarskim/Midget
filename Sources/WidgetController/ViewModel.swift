@@ -21,15 +21,13 @@ extension WidgetController {
         @Published var visibleWidgets: [WidgetInfo]
         @Published var invisibleWidgets: [WidgetInfo]
         @Published var isEditMode: Bool = false
-        @Published var showingAddSheet = false
-        @Published var showingRemoveAlert = false
-        @Published var togglerToRender = false
-        @Published var selectedWidget: WidgetInfo? = nil
-        @Published var conflictedWidget: WidgetInfo? = nil
+        @Published var showingAddSheet: Bool = false
+        @Published var showingRemoveAlert: Bool = false
+        
+        @Published var selectedWidget: WidgetInfo? = nil        
         @Published var scrollState: ScrollState = .normal
-        
-        
-        
+        @Published var hasMoved: Bool = false
+                
         var deviceSize: CGSize? = nil
         var scrollProxy: ScrollViewProxy? = nil
         
@@ -91,31 +89,29 @@ extension WidgetController {
             onChanged(widgetState)
         }
         
-        func updateFrame(of widget: WidgetInfo, into frame: CGRect) {
+        func updateFrame(of widget: WidgetInfo, into frame: CGRect) {            
             guard let index = self.visibleWidgets.firstIndex(of: widget) else { return }
             self.visibleWidgets[index].frame = frame
         }
         
-        func detectCollision(using frame: CGRect) {
-            for widget in visibleWidgets {
-                if widget == selectedWidget {
-                    continue
+        func detectCollision(using frame: CGRect, of widget: WidgetInfo) {
+            guard let index = self.visibleWidgets.firstIndex(of: widget) else { return }
+            let pre: WidgetInfo? = self.visibleWidgets[safe: index - 1]
+            let post: WidgetInfo? = self.visibleWidgets[safe: index + 1]
+            guard let preIndex = self.visibleWidgets.firstIndex(of: pre ?? widget) else { return }
+            guard let postIndex = self.visibleWidgets.firstIndex(of: post ?? widget) else { return }
+            
+            withAnimation(.easeOut(duration: 0.4)) {
+                if frame.midY < pre?.frame?.midY ?? .zero {
+                    self.visibleWidgets.move(fromOffsets: [index], toOffset: preIndex)
+                    self.hasMoved.toggle()
+                } else if frame.midY > post?.frame?.midY ?? .infinity {
+                    self.visibleWidgets.move(fromOffsets: [index], toOffset: postIndex + 1)
+                    self.hasMoved.toggle()
                 }
-                else if frame.contains(CGPoint(x: widget.frame?.midX ?? 0, y: widget.frame?.midY ?? 0)) {
-                    self.conflictedWidget = widget
-                    return
-                }
-            }            
+            }
         }
         
-//        func swap() {
-//            guard let selectedWidget = self.selectedWidget,
-//                  let selectedIndex = self.visibleWidgets.firstIndex(of: selectedWidget),
-//                  let conflictedWidget = self.conflictedWidget,
-//                  let conflictedIndex = self.visibleWidgets.firstIndex(of: conflictedWidget) else { return }
-//            
-//            self.visibleWidgets.swapAt(selectedIndex, conflictedIndex)
-//        }
         
         func checkTouchDevice(using frame: CGRect) {
             guard let deviceSize = self.deviceSize else { return }
@@ -132,7 +128,7 @@ extension WidgetController {
         func scroll(to direction: ScrollState) {
             guard let selectedWidget = self.selectedWidget else { return }
             guard let scrollProxy = self.scrollProxy else { return }
-            var currentIndex = self.visibleWidgets.firstIndex(of: conflictedWidget ?? selectedWidget) ?? 0
+            var currentIndex = self.visibleWidgets.firstIndex(of: selectedWidget) ?? 0
             
             Timer.scheduledTimer(withTimeInterval: 0.3, repeats: true, block: { Timer in
                 // check valid index of showingWidgets.

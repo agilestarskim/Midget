@@ -138,7 +138,6 @@ public struct WidgetController: View {
                     WidgetMainView()
                 }
             }
-            
             .onAppear {
                 vm.deviceSize = globalGeo.size
             }            
