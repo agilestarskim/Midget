@@ -81,8 +81,8 @@ extension WidgetController {
         }
         
         func complete() {
-            let visibleWidgetState: [WidgetState] = visibleWidgets.map { (id: $0.identifier, isVisible: true) }
-            let invisibleWidgetState: [WidgetState] = invisibleWidgets.map { (id: $0.identifier, isVisible: false) }
+            let visibleWidgetState: [WidgetState] = visibleWidgets.map { WidgetState($0.identifier, true) }
+            let invisibleWidgetState: [WidgetState] = invisibleWidgets.map { WidgetState($0.identifier, false) }
             
             let widgetState: [WidgetState] = visibleWidgetState + invisibleWidgetState
             print(widgetState)
