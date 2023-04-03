@@ -36,7 +36,7 @@ struct WidgetEditView: View {
             }
             Button(vm.description.alertRemove, role: .destructive){
                 withAnimation {
-                    vm.toggleIsVisible(vm.selectedWidget)
+                    vm.toggleVisibility(of: vm.selectedWidget)
                 }                
                 vm.selectedWidget = nil
             }

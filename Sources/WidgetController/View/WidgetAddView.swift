@@ -12,7 +12,7 @@ struct WidgetAddView: View {
                 .padding()
                 .onTapGesture {
                     withAnimation{
-                        vm.toggleIsVisible(widget)                        
+                        vm.toggleVisibility(of: widget)                        
                         dismiss()
                     }
                 }

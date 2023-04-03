@@ -63,7 +63,7 @@ extension WidgetController {
             
         }
         
-        func toggleIsVisible(_ widget: WidgetInfo?) {
+        func toggleVisibility(of widget: WidgetInfo?) {
             guard let widget = widget else { return }
             // turn into invisible
             if visibleWidgets.contains(widget) {
@@ -85,7 +85,6 @@ extension WidgetController {
             let invisibleWidgetState: [WidgetState] = invisibleWidgets.map { WidgetState($0.identifier, false) }
             
             let widgetState: [WidgetState] = visibleWidgetState + invisibleWidgetState
-            print(widgetState)
             onChanged(widgetState)
         }
         
@@ -101,7 +100,7 @@ extension WidgetController {
             guard let preIndex = self.visibleWidgets.firstIndex(of: pre ?? widget) else { return }
             guard let postIndex = self.visibleWidgets.firstIndex(of: post ?? widget) else { return }
             
-            withAnimation(.easeOut(duration: 0.4)) {
+            withAnimation(.easeInOut(duration: 0.33)) {
                 if frame.midY < pre?.frame?.midY ?? .zero {
                     self.visibleWidgets.move(fromOffsets: [index], toOffset: preIndex)
                     self.hasMoved.toggle()
@@ -111,8 +110,7 @@ extension WidgetController {
                 }
             }
         }
-        
-        
+                
         func checkTouchDevice(using frame: CGRect) {
             guard let deviceSize = self.deviceSize else { return }
             
