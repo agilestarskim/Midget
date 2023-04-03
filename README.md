@@ -31,11 +31,11 @@ import WidgetController
 ```swift
 @State private var widgetState = WidgetState(
     [   
-        ("viewA", true),
-        ("viewB", true),
-        ("viewC", true),
-        ("viewD", true),
-        ("viewE", true)
+        WidgetState("viewA", true),
+        WidgetState("viewB", true),
+        WidgetState("viewC", true),
+        WidgetState("viewD", false),
+        WidgetState("viewE", false)
     ]
 )
 ```
@@ -46,33 +46,29 @@ import WidgetController
 
 #### What do I need to make a WidgetState?
 
-* you need **stateList** and **saveKey**
-* stateList is a tuple array that stores the state of the widget 
-* savekey is name to store in the userDefaults (persistent storage).
-
-#### How to make
-* widgetState: Array of tuples that consisting of an ID of the view and an bool value indicating whether the view is displayed or not.
-
-* \[optional] saveKey: You can write the key name you want.
+* id: Identifier string that can identify the view 
+* isVisible: Bool value to set whether or not to show the view initially
 
 
 ## 3. Place WidgetController
 
 ```swift
 var body: some View {
-    WidgetController($widgetState) {
+    WidgetController(widgetState) {
+    
+    } onChange: { _ in
     
     }       
 }
 ```  
 
-Place the WidgetController where you want it and pass the just created WidgetState to the constructor factor as the binding value.
+Place the WidgetController where you want it and pass the just created WidgetState to the constructor parameter.
 
 
 ## 4. Make Widgets.
 
 #### What is a Widget?
-* A widget is a view that has an ID.
+* A view that has an ID that can be added, deleted, and moved inside the widget controller.
 
 #### How to make the widget?
 * simply
@@ -85,9 +81,7 @@ Widget("viewA") {
 }
 ```
 
-
-## 5. Complete
-
+#### How to add?
 
 ```swift
 var body: some View {
@@ -111,6 +105,25 @@ var body: some View {
 }
 ```
 
+
+
+## 5. Save the changed widgetState.
+
+#### What is the changed widgetState?
+
+* When the user finishes editing and presses the done button, the edited result is returned to the onChaged closure.
+
+```swift
+var body: some View {
+    WidgetController(widgetState) {
+        // your widgets
+    } onChange: { changedWidget in
+        self.widgetState = changedWidget
+        //save it to your DB
+    }       
+}
+```  
+
 As you may have noticed, the values of the key in the widgetState in step 2 made and the identifier in the widget must be the same.
 
 ## 6. Features
@@ -124,58 +137,3 @@ Widget("viewA") {
     print("viewA Touched")
 }
 ```
-
-
-# Sample Code 
-
-<details>   
-<summary>open</summary>
-
-Sample code is uploaded with package
-
-```swift
-import SwiftUI
-import WidgetController
-
-struct ContentView: View {
-    
-    @State private var widgetStateList = WidgetState([("viewA", true),("viewB", true),("viewC", true),("viewD", true),("viewE", true),("viewF", true),("viewG", true),("viewH", true)])
-        
-    var body: some View {
-        WidgetController($widgetStateList) {
-            Widget(identifier: "viewA") {
-                RoundedRectangle(cornerRadius: 15).fill(.red).frame(height: 100)
-            }
-            Widget(identifier: "viewB") {
-                RoundedRectangle(cornerRadius: 15).fill(.orange).frame(height: 100)
-            }
-            Widget(identifier: "viewC") {
-                RoundedRectangle(cornerRadius: 15).fill(.yellow).frame(height: 100)
-            }
-            Widget(identifier: "viewD") {
-                RoundedRectangle(cornerRadius: 15).fill(.green).frame(height: 100)
-            }
-            Widget(identifier: "viewE") {
-                RoundedRectangle(cornerRadius: 15).fill(.blue).frame(height: 100)
-            }
-            Widget(identifier: "viewF") {
-                RoundedRectangle(cornerRadius: 15).fill(.cyan).frame(height: 100)
-            }
-            Widget(identifier: "viewG") {
-                RoundedRectangle(cornerRadius: 15).fill(.indigo).frame(height: 100)
-            }
-            Widget(identifier: "viewH") {
-                RoundedRectangle(cornerRadius: 15).fill(.pink).frame(height: 100)
-            }
-        }
-    }
-}
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
-}
-```
-
-</details>
