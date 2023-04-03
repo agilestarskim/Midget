@@ -29,8 +29,7 @@ import WidgetController
 ## 2. Set widget state 
 
 ```swift
-@State private var widgetState = WidgetState(
-    [   
+@State private var widgetState = [   
         WidgetState("viewA", true),
         WidgetState("viewB", true),
         WidgetState("viewC", true),
