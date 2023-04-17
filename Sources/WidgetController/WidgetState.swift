@@ -8,8 +8,8 @@
 import Foundation
 
 public struct WidgetState: Equatable {
-    let id: String
-    let isVisible: Bool
+    public let id: String
+    public let isVisible: Bool
     
     public init(_ id: String, _ isVisible: Bool) {
         self.id = id
