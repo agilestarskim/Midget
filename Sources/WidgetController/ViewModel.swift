@@ -10,7 +10,6 @@ import SwiftUI
 
 extension WidgetController {
     
-    
     final class ViewModel: ObservableObject {
         
         enum ScrollState { case up, normal, down }

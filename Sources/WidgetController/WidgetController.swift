@@ -1,12 +1,11 @@
 import SwiftUI
 
-
 /// View container for using widget controllers
 ///
 /// Deliver the WidgetState and WidgetDescription to the constructor parameter and put Widget in the tracking closure.
 ///
 ///     var body: some View {
-///         WidgetController($widgetStates) {
+///         WidgetController(widgetStates) {
 ///             Widget("viewA") {
 ///                 RoundedRectangle(cornerRadius: 15).fill(.red).frame(height: 100)
 ///             }
@@ -128,7 +127,6 @@ public struct WidgetController: View {
         self.vm = ViewModel(widgetStates: widgetStates, widgets: widgets, onChanged: onChanged, description: widgetDescription)
     }
 
-    
     public var body: some View {
         GeometryReader { globalGeo in
             ScrollView(showsIndicators: false) {
