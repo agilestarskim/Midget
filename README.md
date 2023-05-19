@@ -35,8 +35,7 @@ import WidgetController
         WidgetState("viewC", true),
         WidgetState("viewD", false),
         WidgetState("viewE", false)
-    ]
-)
+]
 ```
 
 #### What is a widgetState?
