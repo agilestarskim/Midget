@@ -1,4 +1,4 @@
-# MidgetController
+# Midget
 
 Mimic iOS Widget control system in swiftUI
 you can add, delete and move your own views
