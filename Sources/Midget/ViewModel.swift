@@ -123,8 +123,7 @@ extension MidgetController {
         }
   
         func scroll(to direction: ScrollState) {
-            guard let selectedMidget = self.selectedMidget else { return }
-            guard let scrollProxy = self.scrollProxy else { return }
+            guard let selectedMidget = self.selectedMidget else { return }            
             var currentIndex = self.visibleMidgets.firstIndex(of: selectedMidget) ?? 0
             
             Timer.scheduledTimer(withTimeInterval: 0.3, repeats: true, block: { Timer in
@@ -132,7 +131,7 @@ extension MidgetController {
                 if  self.scrollState != .normal && self.visibleMidgets.startIndex..<self.visibleMidgets.endIndex ~= currentIndex {
                     let destination = self.visibleMidgets[currentIndex].identifier
                     withAnimation{
-                        scrollProxy.scrollTo(destination)
+                        self.scrollProxy?.scrollTo(destination)
                     }
                     if direction == .up {
                         currentIndex -= 1
