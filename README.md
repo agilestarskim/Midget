@@ -1,6 +1,6 @@
-# WidgetController
+# MidgetController
 
-iOS Widget control system in swiftUI
+Mimic iOS Widget control system in swiftUI
 you can add, delete and move your own views
 
 # Screenshots
@@ -16,43 +16,43 @@ It requires iOS 15
 
 In Xcode go to File -> Swift Packages -> Add Package Dependency and paste in the repo's url: 
 
-https://github.com/agilestarskim/WidgetController.git
+https://github.com/agilestarskim/Midget.git
 
 # Usage
 
 ## 1. Import the package in the file you would like to use it
 
 ```swift
-import WidgetController
+import Midget
 ```
 
-## 2. Set widget state 
+## 2. Set Midget state 
 
 ```swift
-@State private var widgetState = [   
-        WidgetState("viewA", true),
-        WidgetState("viewB", true),
-        WidgetState("viewC", true),
-        WidgetState("viewD", false),
-        WidgetState("viewE", false)
+@State private var MidgetState = [   
+        MidgetState("viewA", true),
+        MidgetState("viewB", true),
+        MidgetState("viewC", true),
+        MidgetState("viewD", false),
+        MidgetState("viewE", false)
 ]
 ```
 
-#### What is a widgetState?
+#### What is a MidgetState?
 
-* This is an object for storing and managing the state of widgets
+* This is an object for storing and managing the state of Midgets
 
-#### What do I need to make a WidgetState?
+#### What do I need to make a MidgetState?
 
 * id: Identifier string that can identify the view 
 * isVisible: Bool value to set whether or not to show the view initially
 
 
-## 3. Place WidgetController
+## 3. Place MidgetController
 
 ```swift
 var body: some View {
-    WidgetController(widgetState) {
+    MidgetController(MidgetState) {
     
     } onChange: { _ in
     
@@ -60,19 +60,19 @@ var body: some View {
 }
 ```  
 
-Place the WidgetController where you want it and pass the just created WidgetState to the constructor parameter.
+Place the MidgetController where you want it and pass the just created MidgetState to the constructor parameter.
 
 
-## 4. Make Widgets.
+## 4. Make Midgets.
 
-#### What is a Widget?
-* A view that has an ID that can be added, deleted, and moved inside the widget controller.
+#### What is a Midget?
+* A view that has an ID that can be added, deleted, and moved inside the Midget controller.
 
-#### How to make the widget?
+#### How to make the Midget?
 * simply
 
 ```swift
-Widget("viewA") {
+Midget("viewA") {
     VStack {
         Text("This is a Test Label")
     }
@@ -83,20 +83,20 @@ Widget("viewA") {
 
 ```swift
 var body: some View {
-    WidgetController($widgetState) {
-        Widget("viewA") {
+    MidgetController($MidgetState) {
+        Midget("viewA") {
             //your view
         }
-        Widget("viewB") {
+        Midget("viewB") {
             //your view
         }
-        Widget("viewC") {
+        Midget("viewC") {
             //your view
         }
-        Widget("viewD") {
+        Midget("viewD") {
             //your view
         }
-        Widget("viewE") {
+        Midget("viewE") {
             //your view
         }            
     }   
@@ -105,31 +105,31 @@ var body: some View {
 
 
 
-## 5. Save the changed widgetState.
+## 5. Save the changed MidgetState.
 
-#### What is the changed widgetState?
+#### What is the changed MidgetState?
 
 * When the user finishes editing and presses the done button, the edited result is returned to the onChaged closure.
 
 ```swift
 var body: some View {
-    WidgetController(widgetState) {
-        // your widgets
-    } onChange: { changedWidget in
-        self.widgetState = changedWidget
+    MidgetController(MidgetState) {
+        // your Midgets
+    } onChange: { changedMidget in
+        self.MidgetState = changedMidget
         //save it to your DB
     }       
 }
 ```  
 
-As you may have noticed, the values of the key in the widgetState in step 2 made and the identifier in the widget must be the same.
+As you may have noticed, the values of the key in the MidgetState in step 2 made and the identifier in the Midget must be the same.
 
 ## 6. Features
 
 #### onTouch
-* When you click a widget in the non-edit mode, call the closure.
+* When you click a Midget in the non-edit mode, call the closure.
 ```swift
-Widget("viewA") {
+Midget("viewA") {
     //your view
 } onTouch: {
     print("viewA Touched")

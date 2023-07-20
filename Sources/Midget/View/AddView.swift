@@ -1,18 +1,18 @@
 import SwiftUI
 
-struct WidgetAddView: View {
+struct AddView: View {
     @Environment(\.dismiss) var dismiss
-    @EnvironmentObject var vm: WidgetController.ViewModel
+    @EnvironmentObject var vm: MidgetController.ViewModel
     
     var body: some View {
         ScrollView {
-            ForEach(vm.invisibleWidgets, id: \.identifier){ widget in
-                widget.view
+            ForEach(vm.invisibleMidgets, id: \.identifier){ midget in
+                midget.view
                 .shadow(radius: 10, x: 10, y: 10)
                 .padding()
                 .onTapGesture {
                     withAnimation{
-                        vm.toggleVisibility(of: widget)                        
+                        vm.toggleVisibility(of: midget)
                         dismiss()
                     }
                 }

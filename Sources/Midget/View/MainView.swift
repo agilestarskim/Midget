@@ -1,18 +1,18 @@
 import SwiftUI
 
-struct WidgetMainView: View {
-    @EnvironmentObject var vm: WidgetController.ViewModel
+struct MainView: View {
+    @EnvironmentObject var vm: MidgetController.ViewModel
     let scrollDestination: UUID = UUID()
     var body: some View {
         ScrollViewReader{ value in
             VStack {
                 Color.clear.id(scrollDestination)
                 
-                ForEach(vm.visibleWidgets, id: \.identifier) { widget in
-                    widget.view
+                ForEach(vm.visibleMidgets, id: \.identifier) { midget in
+                    midget.view
                         .padding()
                         .onTapGesture {
-                            widget.onTouch()
+                            midget.onTouch()
                         }
                 }
                 
@@ -21,7 +21,7 @@ struct WidgetMainView: View {
                         value.scrollTo(scrollDestination)
                     }
                     vm.isEditMode = true
-                }.buttonStyle(WidgetButtonStyle())
+                }.buttonStyle(MidgetButtonStyle())
             }
         }
     }

@@ -1,7 +1,7 @@
 import SwiftUI
 
-struct WidgetEditView: View {
-    @EnvironmentObject var vm: WidgetController.ViewModel
+struct EditView: View {
+    @EnvironmentObject var vm: MidgetController.ViewModel
     
     var body: some View {
 
@@ -10,21 +10,21 @@ struct WidgetEditView: View {
                 HStack {
                     Button("+"){
                         vm.showingAddSheet = true
-                    }.buttonStyle(WidgetButtonStyle())
+                    }.buttonStyle(MidgetButtonStyle())
 
                     Spacer()
 
                     Button(vm.description.done){
                         vm.complete()
                         vm.isEditMode = false
-                    }.buttonStyle(WidgetButtonStyle())
+                    }.buttonStyle(MidgetButtonStyle())
 
                 }
                 .padding(.horizontal)
                 
                 
-                ForEach(vm.visibleWidgets, id: \.identifier){ widget in                    
-                    WidgetView(widget: widget)
+                ForEach(vm.visibleMidgets, id: \.identifier){ midget in
+                    MidgetView(midget: midget)
                 }                
             }
             .onAppear { vm.scrollProxy = value }
@@ -32,20 +32,20 @@ struct WidgetEditView: View {
         }
         .alert(vm.description.alertTitle, isPresented: $vm.showingRemoveAlert) {
             Button(vm.description.alertCancel, role: .cancel){
-                vm.selectedWidget = nil
+                vm.selectedMidget = nil
             }
             Button(vm.description.alertRemove, role: .destructive){
                 withAnimation {
-                    vm.toggleVisibility(of: vm.selectedWidget)
+                    vm.toggleVisibility(of: vm.selectedMidget)
                 }                
-                vm.selectedWidget = nil
+                vm.selectedMidget = nil
             }
         } message: {
             Text(vm.description.alertMessage)
         }
         .sheet(isPresented: $vm.showingAddSheet) {
             HalfSheet {
-                WidgetAddView()
+                AddView()
             }
         }
 //        .onPreferenceChange(GeometryPreferenceKey.self) { value in

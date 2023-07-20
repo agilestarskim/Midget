@@ -13,7 +13,7 @@ typealias IdentifiableView = View & Equatable
 ///             }
 ///         }
 ///
-public struct Widget: IdentifiableView {
+public struct Midget: IdentifiableView {
     
     public let identifier: String
     public let content: AnyView
@@ -34,7 +34,7 @@ public struct Widget: IdentifiableView {
         content
     }
     
-    public static func == (lhs: Widget, rhs: Widget) -> Bool {
+    public static func == (lhs: Midget, rhs: Midget) -> Bool {
         return lhs.identifier == rhs.identifier
     }
 }

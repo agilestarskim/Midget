@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct WidgetButtonStyle: ButtonStyle {
+struct MidgetButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .frame(width: 70, height: 35)

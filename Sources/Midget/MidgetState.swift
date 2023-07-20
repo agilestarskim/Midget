@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct WidgetState: Equatable {
+public struct MidgetState: Equatable {
     public let id: String
     public let isVisible: Bool
     

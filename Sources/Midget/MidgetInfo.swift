@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct WidgetInfo: Equatable {
-    static func == (lhs: WidgetInfo, rhs: WidgetInfo) -> Bool {
+struct MidgetInfo: Equatable {
+    static func == (lhs: MidgetInfo, rhs: MidgetInfo) -> Bool {
         lhs.identifier == rhs.identifier
     }
     

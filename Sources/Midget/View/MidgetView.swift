@@ -1,8 +1,8 @@
 import SwiftUI
 
-struct WidgetView: View {
+struct MidgetView: View {
     
-    @EnvironmentObject var vm: WidgetController.ViewModel
+    @EnvironmentObject var vm: MidgetController.ViewModel
     @State private var isDragging: Bool = false
     @State private var offset: CGSize = .zero
     @State private var scale: CGFloat = 1.0
@@ -14,16 +14,16 @@ struct WidgetView: View {
         geo?.frame(in: space) ?? .zero
     }
     
-    let widget: WidgetInfo
+    let midget: MidgetInfo
     
     var body: some View {
         ZStack {
             if isDragging {
-                widget.view
+                midget.view
             } else {
-                widget.view
+                midget.view
                     .editable {
-                        vm.selectedWidget = widget
+                        vm.selectedMidget = midget
                         vm.showingRemoveAlert = true
                     }
                     .wiggle()
@@ -38,15 +38,15 @@ struct WidgetView: View {
             guard let value = value else { return }
             self.geo = value
         }
-        .onChange(of: vm.selectedWidget) { widget in
-            guard widget != nil else { return }
-            vm.updateFrame(of: self.widget, into: frame(space: .named("scrollSpace")))
+        .onChange(of: vm.selectedMidget) { midget in
+            guard midget != nil else { return }
+            vm.updateFrame(of: self.midget, into: frame(space: .named("scrollSpace")))
         }
         .onChange(of: vm.hasMoved) { _ in
-            vm.updateFrame(of: self.widget, into: frame(space: .named("scrollSpace")))
+            vm.updateFrame(of: self.midget, into: frame(space: .named("scrollSpace")))
         }
         .onChange(of: vm.scrollState) { state in
-            guard vm.selectedWidget == widget else { return }
+            guard vm.selectedMidget == midget else { return }
             if state == .up {
                 vm.scroll(to: .up)
             } else if state == .down {
@@ -63,7 +63,7 @@ struct WidgetView: View {
                         scale = 1.05
                     }
                     isDragging = true
-                    vm.selectedWidget = widget
+                    vm.selectedMidget = midget
                 }
                 .sequenced(before: DragGesture(minimumDistance: 0)
                     .onChanged{ drag in
@@ -78,7 +78,7 @@ struct WidgetView: View {
                         let scrollFrame = frame(space: .named("scrollSpace"))
                         let deviceFrame = frame(space: .global)
                         //충돌확인
-                        vm.detectCollision(using: scrollFrame, of: widget)
+                        vm.detectCollision(using: scrollFrame, of: midget)
                         //자동 스크롤
                         vm.checkTouchDevice(using: deviceFrame)                                                
                     }
@@ -86,7 +86,7 @@ struct WidgetView: View {
                         self.isDragging = false
                         self.offset = .zero
                         self.scale = 1.0
-                        vm.selectedWidget = nil                        
+                        vm.selectedMidget = nil                        
                         vm.scrollState = .normal
                     }
             )

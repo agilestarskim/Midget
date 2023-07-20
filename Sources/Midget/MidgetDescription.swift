@@ -1,6 +1,6 @@
 import Foundation
 
-public struct WidgetDescription {
+public struct MidgetDescription {
     let edit: String
     let done: String
     let alertTitle: String
